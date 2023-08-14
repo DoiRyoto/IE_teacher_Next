@@ -13,14 +13,14 @@ type data = {
     tldr: string | null
 }
 
-export default function Home({ params: { keyword }} : { params: { keyword: string }}) {
+export default function Home({ params: { paper_id }} : { params: { paper_id: string }}) {
     const [papers, setPapers] = useState<data[]>([]);
 
     useEffect(() => {
         async function fetchData() {
-            const response = await fetch(`/api/search/${keyword}`)
+            const response = await fetch(`/api/paper/${paper_id}`)
             const data = await response.json()
-            setPapers(data.data.data)
+            setPapers(data.data.reference_papers)
         }
         fetchData()
     }, [])
