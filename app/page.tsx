@@ -2,16 +2,15 @@
 
 import { Container } from '@chakra-ui/react'
 import HeaderIndex from "./components/header_index"
-import { Flex, Input, Box, Stack, Heading, Text, IconButton, Spacer } from '@chakra-ui/react'
+import { Flex, Input, Box, Stack, Heading, Text, IconButton, Spacer, FormControl } from '@chakra-ui/react'
 import { SearchIcon } from '@chakra-ui/icons'
 import { useState } from 'react'
 import Link from 'next/link'
 import LargeWithLogoCentered from './components/footer_index'
+import SearchBar from './components/searchbar'
 
 
 export default function Home() {
-  const [keyword, setKeyword] = useState('')
-
   return (
     <Box>
       <Flex direction={"column"} height="100%">
@@ -35,17 +34,7 @@ export default function Home() {
               Survey support system for information engineering researchers who want to solve the time-consuming problem of surveying too many previous studies.
             </Text>
           </Stack>
-          <Flex direction={"row"}>
-              <Input placeholder='論文タイトルかキーワードを入力してください。' 
-                color={'gray.500'} mr={5} _placeholder={{ opacity: 1, color: 'gray.500' }}
-                type='text'
-                name='keyword'
-                value={keyword}
-                onChange={(e) => {setKeyword(e.target.value)}}/>
-            <Link key={keyword} href={`/search/${keyword}`}>
-              <IconButton aria-label='Search database' icon={<SearchIcon />} />
-            </Link>
-          </Flex>
+          <SearchBar />
         </Container>
         <Spacer />
         <Box mt={200}>

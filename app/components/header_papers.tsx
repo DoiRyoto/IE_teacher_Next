@@ -12,6 +12,7 @@ import {
 import { SearchIcon } from '@chakra-ui/icons'
 import { useState } from 'react'
 import Link from 'next/link'
+import SearchBar from './searchbar'
 
 
 
@@ -44,17 +45,9 @@ export default function HeaderIndex() {
             IET
           </Button>
         </Flex>
-        <Stack direction={"row"} width={"60%"} justify={{ base: 'center', md: 'start' }}>
-              <Input placeholder='論文タイトルかキーワードを入力してください。' 
-                color={'gray.500'} mr={5} _placeholder={{ opacity: 1, color: 'gray.500' }}
-                type='text'
-                name='keyword'
-                value={keyword}
-                onChange={(e) => {setKeyword(e.target.value)}}/>
-            <Link key={keyword} href={`/search/${keyword}`}>
-              <IconButton aria-label='Search database' icon={<SearchIcon />} />
-            </Link>
-          </Stack>
+        <Box width={"60%"}>
+          <SearchBar />
+        </Box>
       </Flex>
     </Box>
   )
