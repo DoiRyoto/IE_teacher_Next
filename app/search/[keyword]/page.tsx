@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Box, Flex, Card, CardHeader, Heading, CardBody, Stack, StackDivider, Text, SimpleGrid } from "@chakra-ui/react";
-import WithSubnavigation from "@/app/components/navbar_index";
+import HeaderPapers from "@/app/components/header_papers";
 import Link from "next/link";
 
 type data = {
@@ -32,7 +32,7 @@ export default function Home({ params: { keyword }} : { params: { keyword: strin
     return (
         <Box>
             <Flex direction={"column"} height="100%">
-                <WithSubnavigation />
+                <HeaderPapers />
                 <Box p={4}>
                     <SimpleGrid columns={2} spacing={4}>
                     {myCallback(() => {

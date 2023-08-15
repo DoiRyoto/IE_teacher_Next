@@ -1,7 +1,7 @@
 "use client"
 
 import { Container } from '@chakra-ui/react'
-import WithSubnavigation from "./components/navbar_index"
+import HeaderIndex from "./components/header_index"
 import { Flex, Input, Box, Stack, Heading, Text, IconButton, Spacer } from '@chakra-ui/react'
 import { SearchIcon } from '@chakra-ui/icons'
 import { useState } from 'react'
@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <Box>
       <Flex direction={"column"} height="100%">
-        <WithSubnavigation />
+        <HeaderIndex />
         <Container maxW={'5xl'}>
           <Stack
             textAlign={'center'}
