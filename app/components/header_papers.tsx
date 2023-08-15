@@ -17,10 +17,8 @@ import SearchBar from './searchbar'
 
 
 export default function HeaderIndex() {
-  const [keyword, setKeyword] = useState('')
-  
   return (
-    <Box width={"100%"}>
+    <Box as="header" position="fixed" backgroundColor="rgba(255, 255, 255, 0.8)" backdropFilter="saturate(180%) blur(5px)" w="100%" zIndex={"sticky"}>
       <Flex
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}

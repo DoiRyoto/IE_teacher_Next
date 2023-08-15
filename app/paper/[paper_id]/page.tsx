@@ -33,7 +33,7 @@ export default function Home({ params: { paper_id }} : { params: { paper_id: str
         <Box>
             <Flex direction={"column"} height="100%">
                 <HeaderPapers />
-                <Box p={4}>
+                <Box p={4} mt={20}>
                     <SimpleGrid columns={2} spacing={4}>
                     {myCallback(() => {
                         const list = [];
