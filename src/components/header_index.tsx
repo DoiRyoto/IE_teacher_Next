@@ -5,21 +5,17 @@ import {
   Flex,
   Button,
   useColorModeValue,
-  Input,
-  IconButton,
-  Stack
 } from '@chakra-ui/react'
-import { SearchIcon } from '@chakra-ui/icons'
-import { useState } from 'react'
-import Link from 'next/link'
-import SearchBar from './searchbar'
+import { useAuthContext } from '@/libs/provider/authContextProvider';
+import { login, logout } from '@/libs/firebase/auth';
 
+export default function HeaderPapers() {
+  const user = useAuthContext()
 
-
-export default function HeaderIndex() {
   return (
-    <Box as="header" position="fixed" backgroundColor="rgba(255, 255, 255, 0.8)" backdropFilter="saturate(180%) blur(5px)" w="100%" zIndex={"sticky"}>
+    <Box width={"100%"}>
       <Flex
+        height={"20"}
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
         minH={'60px'}
@@ -43,9 +39,30 @@ export default function HeaderIndex() {
             IET
           </Button>
         </Flex>
-        <Box width={"60%"}>
-          <SearchBar />
-        </Box>
+        {user.user && (
+          <Flex justify={"flex-end"}>
+          <Button
+              fontSize={"sm"}
+              fontWeight={600}
+              variant={"link"}
+              onClick={() => {logout()}}
+            >
+              Sign out
+          </Button>
+        </Flex>
+        )}
+        {!user.user && (
+          <Flex justify={"flex-end"}>
+          <Button
+              fontSize={"sm"}
+              fontWeight={600}
+              onClick={() => {login()}}
+              variant={"link"}
+            >
+              Sign In
+          </Button>
+        </Flex>
+        )}
       </Flex>
     </Box>
   )
