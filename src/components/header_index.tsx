@@ -56,7 +56,7 @@ export default function HeaderPapers() {
           <Button
               fontSize={"sm"}
               fontWeight={600}
-              onClick={() => {login()}}
+              onClick={() => {login() }}
               variant={"link"}
             >
               Sign In

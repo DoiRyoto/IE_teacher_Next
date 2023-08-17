@@ -2,56 +2,58 @@
 
 import React, { ReactNode } from 'react'
 import {
-  IconButton,
   Box,
-  CloseButton,
+  Button,
   Flex,
   Icon,
   useColorModeValue,
-  Text,
-  Drawer,
-  DrawerContent,
-  useDisclosure,
-  BoxProps,
   FlexProps,
+  Spacer,
+  Stack
 } from '@chakra-ui/react'
 import {
   FiHome,
   FiTrendingUp,
   FiCompass,
   FiStar,
+  FiBarChart2,
   FiSettings,
   FiMenu,
 } from 'react-icons/fi'
 import { IconType } from 'react-icons'
 import { ReactText } from 'react'
+import { useAuthContext } from '@/libs/provider/authContextProvider'
+import { login, logout } from '@/libs/firebase/auth'
 
 interface LinkItemProps {
   name: string
   icon: IconType
+  linkFor?: string
 }
-const LinkItems: Array<LinkItemProps> = [
-  { name: 'Home', icon: FiHome },
-  { name: 'Trending', icon: FiTrendingUp },
-  { name: 'Explore', icon: FiCompass },
-  { name: 'Favourites', icon: FiStar },
-  { name: 'Settings', icon: FiSettings },
-]
 
 export default function SimpleSidebar() {
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
-      <SidebarContent />
-      <Box ml={{ base: "20", md: "60" }}>
-        {/* Content */}
+      <Box ml={{ base: "20", md: "60" }} >
+          {/* Content */}
       </Box>
+      <SidebarContent />
     </Box>
   )
 }
 
 const SidebarContent = () => {
+
+  const user = useAuthContext()
+
+  const LinkItems: Array<LinkItemProps> = [
+    { name: 'Statistics', icon: FiBarChart2, linkFor: `/${user.user?.uid}/statistics`},
+    { name: 'Favourites', icon: FiStar, linkFor: `/${user.user?.uid}/favorites`},
+  ]
+
   return (
-    <Box
+    <Flex
+      direction={"column"}
 			pt={"4"}
       bg={useColorModeValue('white', 'gray.900')}
       borderRight="1px"
@@ -60,24 +62,54 @@ const SidebarContent = () => {
       pos="fixed"
       h="full"
       >
-      {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
+      {user.user && LinkItems.map((link) => (
+        <NavItem key={link.name} icon={link.icon} linkFor={link.linkFor as string}>
           {link.name}
         </NavItem>
       ))}
-    </Box>
+      <Spacer />
+      <Box >
+        {user.user && (
+            <Flex justify={"center"}>
+            <Button
+                fontSize={"sm"}
+                fontWeight={600}
+                variant={"link"}
+                onClick={() => {logout()}}
+              >
+                Sign out
+            </Button>
+          </Flex>
+          )}
+        {!user.user && (
+          <Flex justify={"center"}>
+          <Button
+              fontSize={"sm"}
+              fontWeight={600}
+              onClick={() => {login()}}
+              variant={"link"}
+            >
+              Sign In
+          </Button>
+        </Flex>
+        )}
+      </Box>
+      <Box pb="28">
+      </Box>
+    </Flex>
   )
 }
 
 interface NavItemProps extends FlexProps {
   icon: IconType
   children: ReactText
+  linkFor: string
 }
-const NavItem = ({ icon, children }: NavItemProps) => {
+const NavItem = ({ icon, children, linkFor }: NavItemProps) => {
   return (
     <Box
       as="a"
-      href="#"
+      href={linkFor}
       style={{ textDecoration: 'none' }}
       _focus={{ boxShadow: 'none' }}>
       <Flex
@@ -107,28 +139,5 @@ const NavItem = ({ icon, children }: NavItemProps) => {
 				</Flex>
       </Flex>
     </Box>
-  )
-}
-
-interface MobileProps extends FlexProps {
-  onOpen: () => void
-}
-const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
-  return (
-    <Flex
-      height="20"
-      alignItems="center"
-      bg={useColorModeValue('white', 'gray.900')}
-      borderBottomWidth="1px"
-      borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
-      justifyContent="flex-start"
-      {...rest}>
-      <IconButton
-        variant="outline"
-        onClick={onOpen}
-        aria-label="open menu"
-        icon={<FiMenu />}
-      />
-    </Flex>
   )
 }

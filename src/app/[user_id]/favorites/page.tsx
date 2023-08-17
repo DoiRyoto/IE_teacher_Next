@@ -22,7 +22,7 @@ import HeaderPapers from "@/components/header_papers";
 import Link from "next/link";
 import SidebarWithHeader from "@/components/sidebar";
 import { useAuthContext } from "@/libs/provider/authContextProvider";
-import { addDoc, collection, doc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
 import { db } from "@/libs/firebase/store";
 
 
@@ -35,37 +35,27 @@ type data = {
 };
 
 export default function Home({
-  params: { keyword },
+  params: { user_id },
 }: {
-  params: { keyword: string };
+  params: { user_id: string };
 }) {
   const [papers, setPapers] = useState<data[]>([]);
-  const [uid, setUid] = useState<string>("");
-  const user = useAuthContext()
-
+	const user = useAuthContext()
+	
   useEffect(() => {
-    async function fetchData() {
-      const response = await fetch(`/api/search/${keyword}`);
-      const data = await response.json();
-      setPapers(data.data.data);
-    }
-
     async function getLike() {
-        
+				console.log(user_id)
+        const docRef = doc(db, "users", user_id);
+        const docSnap = await getDoc(docRef);
+
+				if (docSnap.exists()) {
+					console.log(docSnap.data())
+					setPapers(docSnap.data().likes as data[])
+				}
     }
 
-    fetchData();
+    getLike();
   }, []);
-
-  const pushLikeButton = async (paper: data) => {
-      if(user.user){
-        setUid(user.user.uid)
-      } else {
-        return
-      }
-
-      await updateDoc(doc(db, "users", uid), {likes: arrayUnion(paper)})
-    }
 
   const myCallback = (run: any) => {
     return run();
@@ -124,12 +114,6 @@ export default function Home({
                                   </Text>
                                 </Box>
                                 <Spacer />
-                                {user.user && (
-                                  <Box>
-                                    <IconButton aria-label='like' icon={<FiStar />} onClick={() => pushLikeButton(paper)} bg={"white"}/>
-                                  </Box>
-                                )
-                                }
                               </Stack>
                             </Stack>
                           </CardBody>

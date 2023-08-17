@@ -14,8 +14,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 import SearchBar from './searchbar'
 
-
-
 export default function HeaderIndex() {
   return (
       <Flex
