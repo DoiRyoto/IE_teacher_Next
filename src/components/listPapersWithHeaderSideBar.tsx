@@ -26,6 +26,19 @@ import { paperData } from "@/app/utils/type";
 import { deleteLike, getLikes, updateLike } from "@/app/libs/firebase/likes";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/libs/firebase/store";
+import styles from "@/styles/animation.module.css"
+
+function colorCitationCount (count: string | null) {
+  if(count) {
+    if(Number(count) > 10000) {
+      return styles.gold
+    } else if (Number(count) > 5000) {
+      return styles.silver
+    } else if (Number(count) > 1000) {
+      return styles.bronze
+    }
+  }
+} 
 
 export default function ListPapersWithHeaderSideBar({
   mode, keyword_or_id,
@@ -117,8 +130,8 @@ export default function ListPapersWithHeaderSideBar({
                 const list = [];
                 for (const paper of papers) {
                   list.push(
-                      <Box key={paper.paperId}>
-                        <Card>
+                      <Box key={paper.paperId} >
+                        <Card className={colorCitationCount(paper.citationCount)}>
                           <Link href={`/reference/${paper.paperId}`}>
                             <CardHeader _hover={{
                             color: "blue.400",
