@@ -64,7 +64,7 @@ export default function LargeWithLogoCentered() {
           }}>
         </Flex>
         <Text pt={6} fontSize={'sm'} textAlign={'center'}>
-          © 2023 IET. All rights reserved
+          © 2023 情報工学先生 All rights reserved
         </Text>
       </Box>
     </Box>
