@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { Providers } from './providers'
+import { Providers } from '../libs/provider/ChakraProvider'
+import { AuthContextProvider } from '@/libs/provider/authContextProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,12 +16,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>
-        <Providers>
-          {children}
-        </Providers>
-      </body>
-    </html>
+      <html lang="en">
+        <body>
+          <AuthContextProvider>
+            <Providers>
+              {children}
+            </Providers>
+          </AuthContextProvider>
+        </body>
+      </html>
   )
 }

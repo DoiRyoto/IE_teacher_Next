@@ -14,14 +14,10 @@ import { useState } from 'react'
 import Link from 'next/link'
 import SearchBar from './searchbar'
 
-
-
 export default function HeaderIndex() {
   return (
-    <Box as="header" position="fixed" backgroundColor="rgba(255, 255, 255, 0.8)" backdropFilter="saturate(180%) blur(5px)" w="100%" zIndex={"sticky"}>
       <Flex
-        bg={useColorModeValue('white', 'gray.800')}
-        color={useColorModeValue('gray.600', 'white')}
+        as="header" position="fixed" backgroundColor="rgba(255, 255, 255, 0.8)" backdropFilter="saturate(180%) blur(5px)" w="100%" zIndex={"sticky"} h={"20"}
         minH={'60px'}
         py={{ base: 2 }}
         px={{ base: 4 }}
@@ -47,6 +43,5 @@ export default function HeaderIndex() {
           <SearchBar />
         </Box>
       </Flex>
-    </Box>
   )
 }

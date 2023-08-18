@@ -1,13 +1,10 @@
 "use client"
 
 import { Container } from '@chakra-ui/react'
-import HeaderIndex from "./components/header_index"
-import { Flex, Input, Box, Stack, Heading, Text, IconButton, Spacer, FormControl } from '@chakra-ui/react'
-import { SearchIcon } from '@chakra-ui/icons'
-import { useState } from 'react'
-import Link from 'next/link'
-import LargeWithLogoCentered from './components/footer_index'
-import SearchBar from './components/searchbar'
+import HeaderIndex from "../components/header_index"
+import { Flex, Box, Stack, Heading, Text, Spacer } from '@chakra-ui/react'
+import LargeWithLogoCentered from '../components/footer_index'
+import SearchBar from '../components/searchbar'
 
 
 export default function Home() {

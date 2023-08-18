@@ -6,11 +6,16 @@ import {
   Button,
   useColorModeValue,
 } from '@chakra-ui/react'
+import { useAuthContext } from '@/libs/provider/authContextProvider';
+import { login, logout } from '@/libs/firebase/auth';
 
 export default function HeaderPapers() {
+  const user = useAuthContext()
+
   return (
     <Box width={"100%"}>
       <Flex
+        height={"20"}
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
         minH={'60px'}
@@ -34,6 +39,30 @@ export default function HeaderPapers() {
             IET
           </Button>
         </Flex>
+        {user.user && (
+          <Flex justify={"flex-end"}>
+          <Button
+              fontSize={"sm"}
+              fontWeight={600}
+              variant={"link"}
+              onClick={() => {logout()}}
+            >
+              Sign out
+          </Button>
+        </Flex>
+        )}
+        {!user.user && (
+          <Flex justify={"flex-end"}>
+          <Button
+              fontSize={"sm"}
+              fontWeight={600}
+              onClick={() => {login() }}
+              variant={"link"}
+            >
+              Sign In
+          </Button>
+        </Flex>
+        )}
       </Flex>
     </Box>
   )
