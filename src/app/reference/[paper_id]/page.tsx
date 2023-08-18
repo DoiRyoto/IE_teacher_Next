@@ -3,11 +3,11 @@
 import ListPapersWithHeaderSideBar from "@/components/listPapersWithHeaderSideBar";
 
 export default function Home({
-  params: { keyword },
+  params: { paper_id },
 }: {
-  params: { keyword: string };
+  params: { paper_id: string };
 }) {
   return (
-    <ListPapersWithHeaderSideBar mode="search" keyword_or_id={keyword}/>
+    <ListPapersWithHeaderSideBar mode="reference" keyword_or_id={paper_id}/>
   );
 }

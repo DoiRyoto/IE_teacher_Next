@@ -22,49 +22,94 @@ import HeaderPapers from "@/components/header_papers";
 import Link from "next/link";
 import SidebarWithHeader from "@/components/sidebar";
 import { useAuthContext } from "@/libs/provider/authContextProvider";
-import { addDoc, collection, doc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { paperData } from "@/app/utils/type";
+import { deleteLike, getLikes, updateLike } from "@/app/libs/firebase/likes";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/libs/firebase/store";
+import styles from "@/styles/animation.module.css"
 
+function colorCitationCount (count: string | null) {
+  if(count) {
+    if(Number(count) > 10000) {
+      return styles.gold
+    } else if (Number(count) > 5000) {
+      return styles.silver
+    } else if (Number(count) > 1000) {
+      return styles.bronze
+    }
+  }
+} 
 
-type data = {
-  paperId: string | null;
-  title: string | null;
-  year: string | null;
-  citationCount: string | null;
-  tldr: string | null;
-};
-
-export default function Home({
-  params: { paper_id },
+export default function ListPapersWithHeaderSideBar({
+  mode, keyword_or_id,
 }: {
-  params: { paper_id: string };
+  mode: string, keyword_or_id: string
 }) {
-  const [papers, setPapers] = useState<data[]>([]);
+  const [papers, setPapers] = useState<paperData[]>([]);
+  const [likePapers, setLikePapers] = useState<paperData[]>([]);
   const [uid, setUid] = useState<string>("");
   const user = useAuthContext()
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/api/paper/${paper_id}`);
-      const data = await response.json();
-      setPapers(data.data.reference_papers);
+      if(mode == "search"){
+        const response = await fetch(`/api/search/${keyword_or_id}`);
+        const data = await response.json();
+        setPapers(data.data.data);
+      } else if(mode == "reference") {
+        const response = await fetch(`/api/reference/${keyword_or_id}`);
+        const data = await response.json();
+        setPapers(data.data.reference_papers);
+      } else if (mode == "favorites") {
+        getLike()
+      }
     }
 
     async function getLike() {
-        
-    }
+      const docRef = doc(db, "users", keyword_or_id)
+      const docSnap = await getDoc(docRef)
 
-    fetchData();
+      if (docSnap.exists()) {
+        setPapers(docSnap.data().likes as paperData[])
+      }
+    }
+    
+    fetchData()
   }, []);
 
-  const pushLikeButton = async (paper: data) => {
-      if(user.user){
-        setUid(user.user.uid)
-      } else {
-        return
+  useEffect(() => {
+    if (user.user){
+      setUid(user.user.uid)
+      getL()
+    } else {
+      setUid("")
+    }
+
+    async function getL() {
+      if (user.user){
+        const likes = await getLikes(user.user.uid)
+        adaptLikes(likes.map((obj) => obj.paperId))
+        setLikePapers(likes)
+      }
+    }
+
+    async function adaptLikes(lp: string[]) {
+      await setPapers((prevState) => prevState.map((obj) => lp.includes(obj.paperId) ? {...obj, isLike: true}: {...obj, isLike: false}))
+    }
+  }, [user.user?.uid]);
+
+  const pushLikeButton = async (paper: paperData) => {
+      if(uid == ""){
+        return console.log("No User")
       }
 
-      await updateDoc(doc(db, "users", uid), {likes: arrayUnion(paper)})
+      if(paper.isLike){
+        await deleteLike(uid, paper)
+        setPapers((prevState) => prevState.map((obj) => obj.paperId == paper.paperId ? {...obj, isLike: false}: obj))
+      } else {
+        await updateLike(uid, paper)
+        setPapers((prevState) => prevState.map((obj) => obj.paperId == paper.paperId ? {...obj, isLike: true}: obj))
+      }
     }
 
   const myCallback = (run: any) => {
@@ -85,9 +130,9 @@ export default function Home({
                 const list = [];
                 for (const paper of papers) {
                   list.push(
-                      <Box>
-                        <Card>
-                          <Link key={paper.paperId} href={`/paper/${paper.paperId}`}>
+                      <Box key={paper.paperId} >
+                        <Card className={colorCitationCount(paper.citationCount)}>
+                          <Link href={`/reference/${paper.paperId}`}>
                             <CardHeader _hover={{
                             color: "blue.400",
                             fontSize: "xl",
@@ -126,7 +171,7 @@ export default function Home({
                                 <Spacer />
                                 {user.user && (
                                   <Box>
-                                    <IconButton aria-label='like' icon={<FiStar />} onClick={() => pushLikeButton(paper)} bg={"white"}/>
+                                    <IconButton aria-label='like' icon={<FiStar />} onClick={() => pushLikeButton(paper)} bg={"white"} color={paper.isLike ?  "red": "black"}/>
                                   </Box>
                                 )
                                 }
