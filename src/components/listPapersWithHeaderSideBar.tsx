@@ -48,16 +48,14 @@ export default function ListPapersWithHeaderSideBar({
   const [papers, setPapers] = useState<paperData[]>([]);
   const user = useAuthContext()
 
-  console.log("こいつが呼ばれる・子")
-
   useEffect(() => {
     if (user.user){
-      fetchData(user.user.uid)
+      fetchDataWithLogin(user.user.uid)
     } else {
-      return console.log("No User")
+      fetchData()
     }
 
-    async function fetchData(UID: string) {
+    async function fetchDataWithLogin(UID: string) {
       if(mode == "search"){
         const response = await fetch(`/api/search/${keyword_or_id}`);
         const data = await response.json();
@@ -67,6 +65,25 @@ export default function ListPapersWithHeaderSideBar({
         const response = await fetch(`/api/reference/${keyword_or_id}`);
         const data = await response.json();
         getLike(UID)
+        setPapers(data.data.reference_papers);
+      } else if (mode == "favorites") {
+        const docRef = doc(db, "users", keyword_or_id)
+        const docSnap = await getDoc(docRef)
+
+        if (docSnap.exists()) {
+          setPapers(docSnap.data().likes as paperData[])
+        }
+      }
+    }
+
+    async function fetchData() {
+      if(mode == "search"){
+        const response = await fetch(`/api/search/${keyword_or_id}`);
+        const data = await response.json();
+        setPapers(data.data.data);
+      } else if(mode == "reference") {
+        const response = await fetch(`/api/reference/${keyword_or_id}`);
+        const data = await response.json();
         setPapers(data.data.reference_papers);
       } else if (mode == "favorites") {
         const docRef = doc(db, "users", keyword_or_id)
