@@ -125,7 +125,7 @@ export default function ListPapersWithHeaderSideBar({
             <SidebarWithHeader />
           </Box>
           <Box p={4} mt={"20"}>
-            <SimpleGrid columns={2} spacing={4}>
+            <SimpleGrid columns={{base: 1, md: 2, xl: 3}} spacing={4}>
               {myCallback(() => {
                 const list = [];
                 for (const paper of papers) {
