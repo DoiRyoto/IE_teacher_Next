@@ -45,7 +45,7 @@ export default function MyWordCloud({ width, height, showControls, text }: Examp
 	
 	const fontScale = scaleLog({
 		domain: [Math.min(...words.map((w) => w.value)), Math.max(...words.map((w) => w.value))],
-		range: [10, 150],
+		range: [10, 100],
 	});
 	const fontSizeSetter = (datum: WordData) => fontScale(datum.value);
 	
@@ -57,7 +57,7 @@ export default function MyWordCloud({ width, height, showControls, text }: Examp
   const [withRotation, setWithRotation] = useState(false);
 
   return (
-    <Box className="wordcloud">
+    <Box>
       <Wordcloud
         words={words}
         width={width}

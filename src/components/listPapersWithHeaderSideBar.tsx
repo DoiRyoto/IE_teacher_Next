@@ -128,11 +128,11 @@ export default function ListPapersWithHeaderSideBar({
     <Box>
       <Stack direction={"column"} height="100%">
         <HeaderPapers />
-        <Stack direction={"row"}>
-          <Box mt={"20"}>
+        <Stack direction={"row"} mt={"20"}>
+          <Box>
             <SidebarWithHeader />
           </Box>
-          <Box p={4} mt={"20"}>
+          <Box p={4}>
             <SimpleGrid columns={{base: 1, md: 2, xl: 3}} spacing={4}>
               {myCallback(() => {
                 const list = [];

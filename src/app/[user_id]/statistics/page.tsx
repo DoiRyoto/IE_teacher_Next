@@ -35,11 +35,11 @@ export default function Home({
     <Box>
       <Stack direction={"column"} height="100%">
         <HeaderPapers />
-        <Stack direction={"row"}>
-          <Box mt={"20"}>
+        <Stack direction={"row"} mt={"20"}>
+          <Box>
             <SidebarWithHeader />
           </Box>
-          <Box p={4} mt={"20"} width={"100%"}>
+          <Box width={"100%"}>
             <ParentSize>
               {({ width, height }) => <MyWordCloud width={width} height={height} text={words} />}
             </ParentSize>
