@@ -5,13 +5,7 @@ import {
   Flex,
   Button,
   useColorModeValue,
-  Input,
-  IconButton,
-  Stack
 } from '@chakra-ui/react'
-import { SearchIcon } from '@chakra-ui/icons'
-import { useState } from 'react'
-import Link from 'next/link'
 import SearchBar from './searchbar'
 
 export default function HeaderIndex() {

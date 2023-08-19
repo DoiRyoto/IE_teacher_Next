@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Flex,
@@ -46,11 +46,36 @@ export default function ListPapersWithHeaderSideBar({
   mode: string, keyword_or_id: string
 }) {
   const [papers, setPapers] = useState<paperData[]>([]);
-  const [likePapers, setLikePapers] = useState<paperData[]>([]);
-  const [uid, setUid] = useState<string>("");
   const user = useAuthContext()
 
   useEffect(() => {
+    if (user.user){
+      fetchDataWithLogin(user.user.uid)
+    } else {
+      fetchData()
+    }
+
+    async function fetchDataWithLogin(UID: string) {
+      if(mode == "search"){
+        const response = await fetch(`/api/search/${keyword_or_id}`);
+        const data = await response.json();
+        getLike(UID)
+        setPapers(data.data.data);
+      } else if(mode == "reference") {
+        const response = await fetch(`/api/reference/${keyword_or_id}`);
+        const data = await response.json();
+        getLike(UID)
+        setPapers(data.data.reference_papers);
+      } else if (mode == "favorites") {
+        const docRef = doc(db, "users", keyword_or_id)
+        const docSnap = await getDoc(docRef)
+
+        if (docSnap.exists()) {
+          setPapers(docSnap.data().likes as paperData[])
+        }
+      }
+    }
+
     async function fetchData() {
       if(mode == "search"){
         const response = await fetch(`/api/search/${keyword_or_id}`);
@@ -61,70 +86,53 @@ export default function ListPapersWithHeaderSideBar({
         const data = await response.json();
         setPapers(data.data.reference_papers);
       } else if (mode == "favorites") {
-        getLike()
+        const docRef = doc(db, "users", keyword_or_id)
+        const docSnap = await getDoc(docRef)
+
+        if (docSnap.exists()) {
+          setPapers(docSnap.data().likes as paperData[])
+        }
       }
     }
 
-    async function getLike() {
-      const docRef = doc(db, "users", keyword_or_id)
-      const docSnap = await getDoc(docRef)
-
-      if (docSnap.exists()) {
-        setPapers(docSnap.data().likes as paperData[])
-      }
-    }
-    
-    fetchData()
-  }, []);
-
-  useEffect(() => {
-    if (user.user){
-      setUid(user.user.uid)
-      getL()
-    } else {
-      setUid("")
+    async function getLike(UID: string) {
+      const likes = await getLikes(UID)
+      adaptLikes(likes.map((obj) => obj.paperId))
     }
 
-    async function getL() {
-      if (user.user){
-        const likes = await getLikes(user.user.uid)
-        adaptLikes(likes.map((obj) => obj.paperId))
-        setLikePapers(likes)
-      }
+    function adaptLikes(lp: string[]) {
+      setPapers((prevState) => prevState.map((obj) => lp.includes(obj.paperId) ? {...obj, isLike: true}: {...obj, isLike: false}))
     }
-
-    async function adaptLikes(lp: string[]) {
-      await setPapers((prevState) => prevState.map((obj) => lp.includes(obj.paperId) ? {...obj, isLike: true}: {...obj, isLike: false}))
-    }
+  
   }, [user.user?.uid]);
 
   const pushLikeButton = async (paper: paperData) => {
-      if(uid == ""){
+      if(!user.user){
         return console.log("No User")
       }
 
       if(paper.isLike){
-        await deleteLike(uid, paper)
+        await deleteLike(user.user.uid, paper)
         setPapers((prevState) => prevState.map((obj) => obj.paperId == paper.paperId ? {...obj, isLike: false}: obj))
       } else {
-        await updateLike(uid, paper)
+        await updateLike(user.user.uid, paper)
         setPapers((prevState) => prevState.map((obj) => obj.paperId == paper.paperId ? {...obj, isLike: true}: obj))
       }
     }
 
   const myCallback = (run: any) => {
-    return run();
-  };
+    return run()
+  }
 
   return (
     <Box>
       <Stack direction={"column"} height="100%">
         <HeaderPapers />
-        <Stack direction={"row"}>
-          <Box mt={"20"}>
+        <Stack direction={"row"} mt={"20"}>
+          <Box>
             <SidebarWithHeader />
           </Box>
-          <Box p={4} mt={"20"}>
+          <Box p={4}>
             <SimpleGrid columns={{base: 1, md: 2, xl: 3}} spacing={4}>
               {myCallback(() => {
                 const list = [];
