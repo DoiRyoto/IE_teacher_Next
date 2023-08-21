@@ -1,29 +1,18 @@
 'use client'
 
-import React, { ReactNode } from 'react'
 import {
   Box,
-  Button,
   Flex,
   Icon,
   useColorModeValue,
   FlexProps,
   Spacer,
-  Stack
 } from '@chakra-ui/react'
-import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiBarChart2,
-  FiSettings,
-  FiMenu,
-} from 'react-icons/fi'
+import React, { ReactText } from 'react'
 import { IconType } from 'react-icons'
-import { ReactText } from 'react'
-import { useAuthContext } from '@/libs/provider/authContextProvider'
-import { login, logout } from '@/libs/firebase/auth'
+import { FiStar, FiBarChart2 } from 'react-icons/fi'
+import { LoginButton, LogoutButton } from './button/userAuthButton'
+import { useAuthContext } from '@/lib/provider/authContextProvider'
 
 interface LinkItemProps {
   name: string
@@ -34,68 +23,63 @@ interface LinkItemProps {
 export default function SimpleSidebar() {
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
-      <Box ml={{ base: "20", md: "60" }} >
-          {/* Content */}
-      </Box>
+      <Box ml={{ base: '20', md: '60' }}>{/* Content */}</Box>
       <SidebarContent />
     </Box>
   )
 }
 
 const SidebarContent = () => {
-
   const user = useAuthContext()
 
   const LinkItems: Array<LinkItemProps> = [
-    { name: 'Statistics', icon: FiBarChart2, linkFor: `/${user.user?.uid}/statistics`},
-    { name: 'Favourites', icon: FiStar, linkFor: `/${user.user?.uid}/favorites`},
+    {
+      name: 'Statistics',
+      icon: FiBarChart2,
+      linkFor: `/${user.user?.uid}/statistics`,
+    },
+    {
+      name: 'Favourites',
+      icon: FiStar,
+      linkFor: `/${user.user?.uid}/favorites`,
+    },
   ]
 
   return (
     <Flex
-      direction={"column"}
-			pt={"4"}
+      direction={'column'}
+      pt={'4'}
       bg={useColorModeValue('white', 'gray.900')}
       borderRight="1px"
       borderRightColor={useColorModeValue('gray.200', 'gray.700')}
-      w={{ base: 20, md: 60 }}
+      w={{ base: '20', md: '60' }}
       pos="fixed"
       h="full"
-      >
-      {user.user && LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon} linkFor={link.linkFor as string}>
-          {link.name}
-        </NavItem>
-      ))}
+    >
+      {user.user &&
+        LinkItems.map((link) => (
+          <NavItem
+            key={link.name}
+            icon={link.icon}
+            linkFor={link.linkFor as string}
+          >
+            {link.name}
+          </NavItem>
+        ))}
       <Spacer />
-      <Box >
+      <Box>
         {user.user && (
-            <Flex justify={"center"}>
-            <Button
-                fontSize={"sm"}
-                fontWeight={600}
-                variant={"link"}
-                onClick={() => {logout()}}
-              >
-                Sign out
-            </Button>
+          <Flex justify={'center'}>
+            <LogoutButton />
           </Flex>
-          )}
+        )}
         {!user.user && (
-          <Flex justify={"center"}>
-          <Button
-              fontSize={"sm"}
-              fontWeight={600}
-              onClick={() => {login()}}
-              variant={"link"}
-            >
-              Sign In
-          </Button>
-        </Flex>
+          <Flex justify={'center'}>
+            <LoginButton />
+          </Flex>
         )}
       </Box>
-      <Box pb="28">
-      </Box>
+      <Box pb="28"></Box>
     </Flex>
   )
 }
@@ -111,7 +95,8 @@ const NavItem = ({ icon, children, linkFor }: NavItemProps) => {
       as="a"
       href={linkFor}
       style={{ textDecoration: 'none' }}
-      _focus={{ boxShadow: 'none' }}>
+      _focus={{ boxShadow: 'none' }}
+    >
       <Flex
         align="center"
         p="4"
@@ -123,7 +108,7 @@ const NavItem = ({ icon, children, linkFor }: NavItemProps) => {
           bg: 'cyan.400',
           color: 'white',
         }}
-        >
+      >
         {icon && (
           <Icon
             mr="4"
@@ -134,9 +119,7 @@ const NavItem = ({ icon, children, linkFor }: NavItemProps) => {
             as={icon}
           />
         )}
-				<Flex display={{ base: 'none', md: "flex" }}>
-					{children}
-				</Flex>
+        <Flex display={{ base: 'none', md: 'flex' }}>{children}</Flex>
       </Flex>
     </Box>
   )

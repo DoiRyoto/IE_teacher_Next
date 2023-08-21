@@ -1,202 +1,182 @@
-"use client";
+'use client'
 
-import React, { useState, useEffect, useRef } from "react";
-import {
-  Box,
-  Flex,
-  Card,
-  CardHeader,
-  Heading,
-  CardBody,
-  Stack,
-  StackDivider,
-  Text,
-  SimpleGrid,
-  IconButton,
-  Spacer,
-} from "@chakra-ui/react";
-import {
-  FiStar,
-} from 'react-icons/fi'
-import HeaderPapers from "@/components/header_papers";
-import Link from "next/link";
-import SidebarWithHeader from "@/components/sidebar";
-import { useAuthContext } from "@/libs/provider/authContextProvider";
-import { paperData } from "@/app/utils/type";
-import { deleteLike, getLikes, updateLike } from "@/app/libs/firebase/likes";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/libs/firebase/store";
-import styles from "@/styles/animation.module.css"
+import { Box, Stack } from '@chakra-ui/react'
+import { User } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
+import React, { useState, useEffect, useRef } from 'react'
+import { useInView } from 'react-intersection-observer'
+import GridPapers from './gridPapers'
+import { deleteLike, getLikes, updateLike } from '@/app/lib/firebase/likes'
+import { paperData } from '@/app/utils/type'
+import HeaderPapers from '@/components/header_papers'
+import SidebarWithHeader from '@/components/sidebar'
+import { db } from '@/lib/firebase/store'
 
-function colorCitationCount (count: string | null) {
-  if(count) {
-    if(Number(count) > 10000) {
-      return styles.gold
-    } else if (Number(count) > 5000) {
-      return styles.silver
-    } else if (Number(count) > 1000) {
-      return styles.bronze
-    }
-  }
-} 
-
-export default function ListPapersWithHeaderSideBar({
-  mode, keyword_or_id,
-}: {
-  mode: string, keyword_or_id: string
+export default function ListPapersWithHeaderSideBar(params: {
+  mode: string
+  keyword_or_id: string
+  user: User | null
 }) {
-  const [papers, setPapers] = useState<paperData[]>([]);
-  const user = useAuthContext()
+  const [papers, setPapers] = useState<paperData[]>([])
+  const [offset, setOffset] = useState<number>(0)
+  const firstRender = useRef(true)
+  const isEnd = useRef(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const single = 20
+  const { ref, inView: isScrollEnd } = useInView()
 
   useEffect(() => {
-    if (user.user){
-      fetchDataWithLogin(user.user.uid)
-    } else {
-      fetchData()
-    }
-
-    async function fetchDataWithLogin(UID: string) {
-      if(mode == "search"){
-        const response = await fetch(`/api/search/${keyword_or_id}`);
-        const data = await response.json();
-        getLike(UID)
-        setPapers(data.data.data);
-      } else if(mode == "reference") {
-        const response = await fetch(`/api/reference/${keyword_or_id}`);
-        const data = await response.json();
-        getLike(UID)
-        setPapers(data.data.reference_papers);
-      } else if (mode == "favorites") {
-        const docRef = doc(db, "users", keyword_or_id)
+    async function fetchData() {
+      if (params.mode == 'search') {
+        const response = await fetch(
+          `/api/search/${params.keyword_or_id}/${String(offset)}`,
+        )
+        const data = await response.json()
+        if (data.data)
+          if (data.data.data.length < single) {
+            isEnd.current = true
+          }
+        if (params.user) {
+          getLike(params.user.uid)
+        }
+        setPapers(data.data.data)
+        setIsLoading(false)
+      } else if (params.mode == 'reference') {
+        const response = await fetch(
+          `/api/reference/${params.keyword_or_id}/${String(offset)}`,
+        )
+        const data = await response.json()
+        if (data.data.reference_papers.length < single) {
+          isEnd.current = true
+        }
+        if (params.user) {
+          getLike(params.user.uid)
+        }
+        setPapers(data.data.reference_papers)
+        setIsLoading(false)
+      } else if (params.mode == 'favorites') {
+        const docRef = doc(db, 'users', params.keyword_or_id)
         const docSnap = await getDoc(docRef)
 
         if (docSnap.exists()) {
           setPapers(docSnap.data().likes as paperData[])
         }
+        setIsLoading(false)
+      }
+    }
+
+    setIsLoading(true)
+    fetchData()
+  }, [params.user?.uid])
+
+  async function getLike(UID: string) {
+    const likes = await getLikes(UID)
+    adaptLikes(likes.map((obj) => obj.paperId))
+  }
+
+  function adaptLikes(lp: string[]) {
+    setPapers((prevState) =>
+      prevState.map((obj) =>
+        lp.includes(obj.paperId)
+          ? { ...obj, isLike: true }
+          : { ...obj, isLike: false },
+      ),
+    )
+  }
+
+  const pushLikeButton = async (paper: paperData) => {
+    if (!params.user) {
+      return console.log('No User')
+    }
+
+    if (paper.isLike) {
+      await deleteLike(params.user.uid, paper)
+      setPapers((prevState) =>
+        prevState.map((obj) =>
+          obj.paperId == paper.paperId ? { ...obj, isLike: false } : obj,
+        ),
+      )
+    } else {
+      await updateLike(params.user.uid, paper)
+      setPapers((prevState) =>
+        prevState.map((obj) =>
+          obj.paperId == paper.paperId ? { ...obj, isLike: true } : obj,
+        ),
+      )
+    }
+  }
+
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false
+    } else {
+      if (!isEnd.current) {
+        fetchData()
+        setIsLoading(true)
       }
     }
 
     async function fetchData() {
-      if(mode == "search"){
-        const response = await fetch(`/api/search/${keyword_or_id}`);
-        const data = await response.json();
-        setPapers(data.data.data);
-      } else if(mode == "reference") {
-        const response = await fetch(`/api/reference/${keyword_or_id}`);
-        const data = await response.json();
-        setPapers(data.data.reference_papers);
-      } else if (mode == "favorites") {
-        const docRef = doc(db, "users", keyword_or_id)
+      if (params.mode == 'search') {
+        const response = await fetch(
+          `/api/search/${params.keyword_or_id}/${String(offset + single)}`,
+        )
+        const data = await response.json()
+        if (data.data.data.length < single) {
+          isEnd.current = true
+        }
+        if (params.user) {
+          getLike(params.user.uid)
+        }
+        setPapers([...papers, ...data.data.data])
+        setIsLoading(false)
+        setOffset(offset + single)
+      } else if (params.mode == 'reference') {
+        const response = await fetch(
+          `/api/reference/${params.keyword_or_id}/${String(offset + single)}`,
+        )
+        const data = await response.json()
+        if (data.data.reference_papers.length < single) {
+          isEnd.current = true
+        }
+        if (params.user) {
+          getLike(params.user.uid)
+        }
+        setPapers([...papers, ...data.data.reference_papers])
+        setIsLoading(false)
+        setOffset(offset + single)
+      } else if (params.mode == 'favorites') {
+        const docRef = doc(db, 'users', params.keyword_or_id)
         const docSnap = await getDoc(docRef)
 
         if (docSnap.exists()) {
           setPapers(docSnap.data().likes as paperData[])
         }
+        setIsLoading(false)
       }
     }
-
-    async function getLike(UID: string) {
-      const likes = await getLikes(UID)
-      adaptLikes(likes.map((obj) => obj.paperId))
-    }
-
-    function adaptLikes(lp: string[]) {
-      setPapers((prevState) => prevState.map((obj) => lp.includes(obj.paperId) ? {...obj, isLike: true}: {...obj, isLike: false}))
-    }
-  
-  }, [user.user?.uid]);
-
-  const pushLikeButton = async (paper: paperData) => {
-      if(!user.user){
-        return console.log("No User")
-      }
-
-      if(paper.isLike){
-        await deleteLike(user.user.uid, paper)
-        setPapers((prevState) => prevState.map((obj) => obj.paperId == paper.paperId ? {...obj, isLike: false}: obj))
-      } else {
-        await updateLike(user.user.uid, paper)
-        setPapers((prevState) => prevState.map((obj) => obj.paperId == paper.paperId ? {...obj, isLike: true}: obj))
-      }
-    }
-
-  const myCallback = (run: any) => {
-    return run()
-  }
+  }, [isScrollEnd])
 
   return (
     <Box>
-      <Stack direction={"column"} height="100%">
+      <Stack direction={'column'} height="100%">
         <HeaderPapers />
-        <Stack direction={"row"} mt={"20"}>
+        <Stack direction={'row'} mt={'20'}>
           <Box>
             <SidebarWithHeader />
           </Box>
           <Box p={4}>
-            <SimpleGrid columns={{base: 1, md: 2, xl: 3}} spacing={4}>
-              {myCallback(() => {
-                const list = [];
-                for (const paper of papers) {
-                  list.push(
-                      <Box key={paper.paperId} >
-                        <Card className={colorCitationCount(paper.citationCount)}>
-                          <Link href={`/reference/${paper.paperId}`}>
-                            <CardHeader _hover={{
-                            color: "blue.400",
-                            fontSize: "xl",
-                            cursor: "pointer",
-                            }}>
-                              <Heading size="md">{paper.title}</Heading>
-                            </CardHeader>
-                          </Link>
-                          <CardBody>
-                            <Stack divider={<StackDivider />} spacing="4">
-                              <Box>
-                                <Heading size="xs" textTransform="uppercase">
-                                  TLDR
-                                </Heading>
-                                <Text pt="2" fontSize="sm">
-                                  {paper.tldr}
-                                </Text>
-                              </Box>
-                              <Stack direction={"row"} spacing="4">
-                                <Box>
-                                  <Heading size="xs" textTransform="uppercase">
-                                    Citations
-                                  </Heading>
-                                  <Text pt="2" fontSize="sm">
-                                    {paper.citationCount}
-                                  </Text>
-                                </Box>
-                                <Box>
-                                  <Heading size="xs" textTransform="uppercase">
-                                    Year
-                                  </Heading>
-                                  <Text pt="2" fontSize="sm">
-                                    {paper.year}
-                                  </Text>
-                                </Box>
-                                <Spacer />
-                                {user.user && (
-                                  <Box>
-                                    <IconButton aria-label='like' icon={<FiStar />} onClick={() => pushLikeButton(paper)} bg={"white"} color={paper.isLike ?  "red": "black"}/>
-                                  </Box>
-                                )
-                                }
-                              </Stack>
-                            </Stack>
-                          </CardBody>
-                        </Card>
-                      </Box>
-                  );
-                }
-
-                return list;
-              })}
-            </SimpleGrid>
+            <GridPapers
+              user={params.user}
+              papers={papers}
+              onClickLikeButton={pushLikeButton}
+            />
+            {!isEnd.current && !isLoading && (
+              <div ref={ref} aria-hidden={true} />
+            )}
           </Box>
         </Stack>
       </Stack>
     </Box>
-  );
+  )
 }

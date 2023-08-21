@@ -1,9 +1,6 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import { Providers } from '../libs/provider/ChakraProvider'
-import { AuthContextProvider } from '@/libs/provider/authContextProvider'
-
-const inter = Inter({ subsets: ['latin'] })
+import { AuthContextProvider } from '@/lib/provider/authContextProvider'
+import { MyChakraProvider } from '@/lib/provider/chakraProvider'
 
 export const metadata: Metadata = {
   title: '情報工学先生',
@@ -16,14 +13,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-      <html lang="en">
-        <body>
-          <AuthContextProvider>
-            <Providers>
-              {children}
-            </Providers>
-          </AuthContextProvider>
-        </body>
-      </html>
+    <html lang="en">
+      <body>
+        <AuthContextProvider>
+          <MyChakraProvider>{children}</MyChakraProvider>
+        </AuthContextProvider>
+      </body>
+    </html>
   )
 }
