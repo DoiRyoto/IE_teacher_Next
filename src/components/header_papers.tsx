@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react'
 import SearchBar from './searchbar'
 
-export default function HeaderIndex() {
+export default function HeaderPapers() {
   return (
       <Flex
         as="header" position="fixed" backgroundColor="rgba(255, 255, 255, 0.8)" backdropFilter="saturate(180%) blur(5px)" w="100%" zIndex={"sticky"} h={"20"}

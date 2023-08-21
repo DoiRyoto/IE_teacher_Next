@@ -1,4 +1,4 @@
-import { db } from "@/libs/firebase/store";
+import { db } from "@/lib/firebase/store";
 import { paperData } from "@/app/utils/type";
 import { addDoc, arrayRemove, arrayUnion, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";

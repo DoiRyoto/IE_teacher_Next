@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { Providers } from '../libs/provider/ChakraProvider'
-import { AuthContextProvider } from '@/libs/provider/authContextProvider'
+import { MyChakraProvider } from '@/lib/provider/chakraProvider'
+import { AuthContextProvider } from '@/lib/provider/authContextProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,9 +19,9 @@ export default function RootLayout({
       <html lang="en">
         <body>
           <AuthContextProvider>
-            <Providers>
+            <MyChakraProvider>
               {children}
-            </Providers>
+            </MyChakraProvider>
           </AuthContextProvider>
         </body>
       </html>

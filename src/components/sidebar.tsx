@@ -12,18 +12,13 @@ import {
   Stack
 } from '@chakra-ui/react'
 import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
   FiStar,
-  FiBarChart2,
-  FiSettings,
-  FiMenu,
+  FiBarChart2
 } from 'react-icons/fi'
 import { IconType } from 'react-icons'
 import { ReactText } from 'react'
-import { useAuthContext } from '@/libs/provider/authContextProvider'
-import { login, logout } from '@/libs/firebase/auth'
+import { useAuthContext } from '@/lib/provider/authContextProvider'
+import { LoginButton, LogoutButton } from './button/userAuthButton'
 
 interface LinkItemProps {
   name: string
@@ -58,7 +53,7 @@ const SidebarContent = () => {
       bg={useColorModeValue('white', 'gray.900')}
       borderRight="1px"
       borderRightColor={useColorModeValue('gray.200', 'gray.700')}
-      w={{ base: 20, md: 60 }}
+      w={{ base: "20", md: "60" }}
       pos="fixed"
       h="full"
       >
@@ -70,28 +65,14 @@ const SidebarContent = () => {
       <Spacer />
       <Box >
         {user.user && (
-            <Flex justify={"center"}>
-            <Button
-                fontSize={"sm"}
-                fontWeight={600}
-                variant={"link"}
-                onClick={() => {logout()}}
-              >
-                Sign out
-            </Button>
+          <Flex justify={"center"}>
+            <LogoutButton />
           </Flex>
-          )}
+        )}
         {!user.user && (
           <Flex justify={"center"}>
-          <Button
-              fontSize={"sm"}
-              fontWeight={600}
-              onClick={() => {login()}}
-              variant={"link"}
-            >
-              Sign In
-          </Button>
-        </Flex>
+            <LoginButton />
+          </Flex>
         )}
       </Box>
       <Box pb="28">

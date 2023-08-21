@@ -1,6 +1,5 @@
 import firebaseApp from "./client"
 import { signInWithPopup, GoogleAuthProvider, getAuth } from "firebase/auth";
-import { useAuthContext } from "../provider/authContextProvider";
 
 const auth = getAuth(firebaseApp);
 

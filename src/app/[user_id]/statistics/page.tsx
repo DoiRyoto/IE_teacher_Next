@@ -3,7 +3,7 @@
 import MyWordCloud from "./myWordCloud";
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/libs/firebase/store";
+import { db } from "@/lib/firebase/store";
 import { paperData } from "@/app/utils/type";
 import { ParentSize } from '@visx/responsive';
 import { Box, Stack } from "@chakra-ui/react";
