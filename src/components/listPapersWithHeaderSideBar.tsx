@@ -4,13 +4,13 @@ import { Box, Stack } from '@chakra-ui/react'
 import { User } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import React, { useState, useEffect, useRef } from 'react'
+import { useInView } from 'react-intersection-observer'
 import GridPapers from './gridPapers'
 import { deleteLike, getLikes, updateLike } from '@/app/lib/firebase/likes'
 import { paperData } from '@/app/utils/type'
 import HeaderPapers from '@/components/header_papers'
 import SidebarWithHeader from '@/components/sidebar'
 import { db } from '@/lib/firebase/store'
-import { useInView } from 'react-intersection-observer'
 
 export default function ListPapersWithHeaderSideBar(params: {
   mode: string
@@ -24,28 +24,32 @@ export default function ListPapersWithHeaderSideBar(params: {
   const [isLoading, setIsLoading] = useState(false)
   const single = 20
   const { ref, inView: isScrollEnd } = useInView()
-  
+
   useEffect(() => {
     async function fetchData() {
       if (params.mode == 'search') {
-        const response = await fetch(`/api/search/${params.keyword_or_id}/${String(offset)}`)
+        const response = await fetch(
+          `/api/search/${params.keyword_or_id}/${String(offset)}`,
+        )
         const data = await response.json()
-        if(data.data)
-        if(data.data.data.length < single){
-          isEnd.current = true
-        }
-        if(params.user){
+        if (data.data)
+          if (data.data.data.length < single) {
+            isEnd.current = true
+          }
+        if (params.user) {
           getLike(params.user.uid)
         }
         setPapers(data.data.data)
         setIsLoading(false)
       } else if (params.mode == 'reference') {
-        const response = await fetch(`/api/reference/${params.keyword_or_id}/${String(offset)}`)
+        const response = await fetch(
+          `/api/reference/${params.keyword_or_id}/${String(offset)}`,
+        )
         const data = await response.json()
-        if(data.data.reference_papers.length < single){
+        if (data.data.reference_papers.length < single) {
           isEnd.current = true
         }
-        if(params.user){
+        if (params.user) {
           getLike(params.user.uid)
         }
         setPapers(data.data.reference_papers)
@@ -60,7 +64,7 @@ export default function ListPapersWithHeaderSideBar(params: {
         setIsLoading(false)
       }
     }
-    
+
     setIsLoading(true)
     fetchData()
   }, [params.user?.uid])
@@ -103,35 +107,39 @@ export default function ListPapersWithHeaderSideBar(params: {
   }
 
   useEffect(() => {
-    if(firstRender.current){
+    if (firstRender.current) {
       firstRender.current = false
     } else {
-      if(!isEnd.current){
+      if (!isEnd.current) {
         fetchData()
         setIsLoading(true)
       }
     }
-    
+
     async function fetchData() {
       if (params.mode == 'search') {
-        const response = await fetch(`/api/search/${params.keyword_or_id}/${String(offset + single)}`)
+        const response = await fetch(
+          `/api/search/${params.keyword_or_id}/${String(offset + single)}`,
+        )
         const data = await response.json()
-        if(data.data.data.length < single){
+        if (data.data.data.length < single) {
           isEnd.current = true
         }
-        if(params.user){
+        if (params.user) {
           getLike(params.user.uid)
         }
         setPapers([...papers, ...data.data.data])
         setIsLoading(false)
         setOffset(offset + single)
       } else if (params.mode == 'reference') {
-        const response = await fetch(`/api/reference/${params.keyword_or_id}/${String(offset+single)}`)
+        const response = await fetch(
+          `/api/reference/${params.keyword_or_id}/${String(offset + single)}`,
+        )
         const data = await response.json()
-        if(data.data.reference_papers.length < single){
+        if (data.data.reference_papers.length < single) {
           isEnd.current = true
         }
-        if(params.user){
+        if (params.user) {
           getLike(params.user.uid)
         }
         setPapers([...papers, ...data.data.reference_papers])
@@ -163,7 +171,9 @@ export default function ListPapersWithHeaderSideBar(params: {
               papers={papers}
               onClickLikeButton={pushLikeButton}
             />
-            {!isEnd.current && !isLoading && <div ref={ref} aria-hidden={true}/>}
+            {!isEnd.current && !isLoading && (
+              <div ref={ref} aria-hidden={true} />
+            )}
           </Box>
         </Stack>
       </Stack>

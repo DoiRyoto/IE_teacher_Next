@@ -103,7 +103,7 @@ export default function GridPapers(params: {
                   </Stack>
                 </CardBody>
               </Card>
-            </Box>
+            </Box>,
           )
         }
 
