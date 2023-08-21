@@ -2,15 +2,13 @@
 
 import {
   Box,
-  Button,
   Flex,
   Icon,
   useColorModeValue,
   FlexProps,
   Spacer,
-  Stack,
 } from '@chakra-ui/react'
-import React, { ReactNode, ReactText } from 'react'
+import React, { ReactText } from 'react'
 import { IconType } from 'react-icons'
 import { FiStar, FiBarChart2 } from 'react-icons/fi'
 import { LoginButton, LogoutButton } from './button/userAuthButton'

@@ -4,7 +4,7 @@ import { Box } from '@chakra-ui/react'
 import { scaleLog } from '@visx/scale'
 import { Text } from '@visx/text'
 import Wordcloud from '@visx/wordcloud/lib/Wordcloud'
-import React, { useState } from 'react'
+import React from 'react'
 
 interface ExampleProps {
   width: number
@@ -21,12 +21,7 @@ export interface WordData {
 const colors = ['#143059', '#2F6B9A', '#82a6c2']
 
 // 改善案: https://towardsdatascience.com/generate-meaningful-word-clouds-in-python-5b85f5668eeb
-export default function MyWordCloud({
-  width,
-  height,
-  showControls,
-  text,
-}: ExampleProps) {
+export default function MyWordCloud({ width, height, text }: ExampleProps) {
   function wordFreq(text: string): WordData[] {
     const words: string[] = text.replace(/\./g, '').split(/\s/)
     const freqMap: Record<string, number> = {}
@@ -60,10 +55,8 @@ export default function MyWordCloud({
 
   const fixedValueGenerator = () => 0.5
 
-  type SpiralType = 'archimedean' | 'rectangular'
-
-  const [spiralType, setSpiralType] = useState<SpiralType>('rectangular')
-  const [withRotation, setWithRotation] = useState(false)
+  const spiralType = 'rectangular'
+  const withRotation = false
 
   return (
     <Box>
@@ -93,7 +86,7 @@ export default function MyWordCloud({
           ))
         }
       </Wordcloud>
-      <style jsx>{`
+      <style>{`
         .wordcloud {
           display: flex;
           flex-direction: column;

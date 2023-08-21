@@ -1,9 +1,6 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import { AuthContextProvider } from '@/lib/provider/authContextProvider'
 import { MyChakraProvider } from '@/lib/provider/chakraProvider'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: '情報工学先生',

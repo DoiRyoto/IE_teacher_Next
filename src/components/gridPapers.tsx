@@ -25,7 +25,7 @@ export default function GridPapers(params: {
   papers: paperData[]
   onClickLikeButton: Function
 }) {
-  const myCallback = (run: any) => {
+  const myCallback = (run: Function) => {
     return run()
   }
 

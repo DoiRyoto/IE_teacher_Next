@@ -2,12 +2,10 @@
 
 import {
   Container,
-  Flex,
   Box,
   Stack,
   Heading,
   Text,
-  Spacer,
 } from '@chakra-ui/react'
 import FooterIndex from '../components/footer_index'
 import HeaderIndex from '../components/header_index'

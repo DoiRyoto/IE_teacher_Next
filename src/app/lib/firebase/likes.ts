@@ -1,9 +1,6 @@
-import { FirebaseError } from 'firebase/app'
 import {
-  addDoc,
   arrayRemove,
   arrayUnion,
-  collection,
   doc,
   getDoc,
   setDoc,
@@ -19,7 +16,7 @@ export async function updateLike(uid: string | null, paper: paperData) {
 
   await updateDoc(doc(db, 'users', uid), {
     likes: arrayUnion({ ...paper, isLike: true }),
-  }).catch((FirebaseError) =>
+  }).catch(() =>
     setDoc(doc(db, 'users', uid), { likes: [{ ...paper, isLike: true }] }),
   )
 }
