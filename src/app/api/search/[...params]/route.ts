@@ -3,7 +3,7 @@ import { baseURL } from '../../requests'
 
 export async function GET(request: Request, { params }: any) {
   const res = await fetch(
-    `${baseURL}/paper/${params.keyword}?api_key=${process.env.NEXT_PUBLIC_S2_API_KEY}`,
+    `${baseURL}/paper/${params.params[0]}?api_key=${process.env.NEXT_PUBLIC_S2_API_KEY}&offset=${params.params[1]}`,
   )
   const data = await res.json()
 
