@@ -1,4 +1,4 @@
-import firebaseApp from "./client"
-import { getFirestore } from "firebase/firestore"
+import { getFirestore } from 'firebase/firestore'
+import firebaseApp from './client'
 
 export const db = getFirestore(firebaseApp)
