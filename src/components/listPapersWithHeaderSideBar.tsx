@@ -33,7 +33,7 @@ export default function ListPapersWithHeaderSideBar(params: {
         )
         const data = await response.json()
         if (data.data)
-          if (data.data.data.length < single) {
+          if (data.data.data.length == 0) {
             isEnd.current = true
           }
         if (params.user) {
@@ -46,7 +46,7 @@ export default function ListPapersWithHeaderSideBar(params: {
           `/api/reference/${params.keyword_or_id}/${String(offset)}`,
         )
         const data = await response.json()
-        if (data.data.reference_papers.length < single) {
+        if (data.data.reference_papers.length == 0) {
           isEnd.current = true
         }
         if (params.user) {
@@ -122,7 +122,7 @@ export default function ListPapersWithHeaderSideBar(params: {
           `/api/search/${params.keyword_or_id}/${String(offset + single)}`,
         )
         const data = await response.json()
-        if (data.data.data.length < single) {
+        if (data.data.data.length == 0) {
           isEnd.current = true
         }
         if (params.user) {
@@ -136,7 +136,7 @@ export default function ListPapersWithHeaderSideBar(params: {
           `/api/reference/${params.keyword_or_id}/${String(offset + single)}`,
         )
         const data = await response.json()
-        if (data.data.reference_papers.length < single) {
+        if (data.data.reference_papers.length == 0) {
           isEnd.current = true
         }
         if (params.user) {
