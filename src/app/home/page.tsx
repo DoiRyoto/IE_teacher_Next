@@ -7,24 +7,15 @@ import {
   Heading,
   Text,
 } from '@chakra-ui/react'
-import FooterIndex from '../components/footer_index'
-import HeaderIndex from '../components/header_index'
+import FooterIndex from '@/components/footer_index'
+import HeaderIndex from '@/components/header_index'
 
-import SearchBar from '../components/searchbar'
+import SearchBar from '@/components/searchbar'
 import { useAuthContext } from '@/lib/provider/authContextProvider'
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react'
 
 export default function Home() {
   const user = useAuthContext()
-  const router = useRouter()
 
-  useEffect(() => {
-    if(user.user){
-      router.push("/home")
-    }
-  }, [user.user?.uid])
-  
   return (
     <Stack direction={'column'} height="100%">
       <HeaderIndex user={user.user} />

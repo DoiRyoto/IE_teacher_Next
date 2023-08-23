@@ -3,7 +3,7 @@ export type paperData = {
   title: string | null
   year: string | null
   citationCount: string | null
-  tldr: string | null
+  tldr: any
   authors: string | null
   abstract: string | null
   url: string | null

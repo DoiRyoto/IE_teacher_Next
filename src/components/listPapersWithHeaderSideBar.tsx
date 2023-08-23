@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Flex, Spinner, Stack, calc } from '@chakra-ui/react'
+import { Box, Flex, Spinner, Stack } from '@chakra-ui/react'
 import { User } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import React, { useState, useEffect, useRef } from 'react'
@@ -11,6 +11,7 @@ import { paperData } from '@/app/utils/type'
 import HeaderPapers from '@/components/header_papers'
 import SidebarWithHeader from '@/components/sidebar'
 import { db } from '@/lib/firebase/store'
+import { paperDataIncludeError } from '@/app/utils/errorHandle'
 
 export default function ListPapersWithHeaderSideBar(params: {
   mode: string
@@ -27,32 +28,58 @@ export default function ListPapersWithHeaderSideBar(params: {
 
   useEffect(() => {
     async function fetchData() {
+      if(isLoading || isEnd.current){
+        return
+      }
+
       if (params.mode == 'search') {
         const response = await fetch(
           `/api/search/${params.keyword_or_id}/${String(offset)}`,
+          {method: "GET"}
         )
         const data = await response.json()
-        if (data.data)
-          if (data.data.data.length == 0) {
-            isEnd.current = true
-          }
+        
+        if (paperDataIncludeError(data.data)) {
+          isEnd.current = true
+          setIsLoading(false)
+          return
+        }
+
         if (params.user) {
           getLike(params.user.uid)
         }
         setPapers(data.data.data)
         setIsLoading(false)
       } else if (params.mode == 'reference') {
+        const responseIds = await fetch(
+          `/api/reference/${params.keyword_or_id}/${String(offset)}`,
+          {method: "GET"}
+        )
+        const dataIds = await responseIds.json()
+        if (paperDataIncludeError(dataIds.data)) {
+          isEnd.current = true
+          setIsLoading(false)
+          return
+        }
+        const paperIds = dataIds.data.data.map((obj: any) => (obj.citedPaper.paperId))
+
         const response = await fetch(
           `/api/reference/${params.keyword_or_id}/${String(offset)}`,
+          {method: "POST", body: JSON.stringify({"ids": paperIds})}
         )
         const data = await response.json()
-        if (data.data.reference_papers.length == 0) {
+        console.log(data.data)
+        if (paperDataIncludeError(data)) {
           isEnd.current = true
+          setIsLoading(false)
+          return
         }
+
         if (params.user) {
           getLike(params.user.uid)
         }
-        setPapers(data.data.reference_papers)
+
+        setPapers(data.data)
         setIsLoading(false)
       } else if (params.mode == 'favorites') {
         const docRef = doc(db, 'users', params.keyword_or_id)
@@ -108,13 +135,15 @@ export default function ListPapersWithHeaderSideBar(params: {
   }
 
   useEffect(() => {
+    if(isLoading || isEnd.current){
+      return
+    }
+
     if (firstRender.current) {
       firstRender.current = false
     } else {
-      if (!isEnd.current) {
-        fetchData()
         setIsLoading(true)
-      }
+        fetchData()
     }
 
     async function fetchData() {
@@ -123,29 +152,53 @@ export default function ListPapersWithHeaderSideBar(params: {
           `/api/search/${params.keyword_or_id}/${String(offset + single)}`,
         )
         const data = await response.json()
-        if (data.data.data.length == 0) {
+        console.log(data.data)
+        if (Object.keys(data.data).includes("error")){
           isEnd.current = true
+          setIsLoading(false)
+          return
         }
+
         if (params.user) {
           getLike(params.user.uid)
         }
+
         setPapers([...papers, ...data.data.data])
         setIsLoading(false)
         setOffset(offset + single)
+
       } else if (params.mode == 'reference') {
+        const responseIds = await fetch(
+          `/api/reference/${params.keyword_or_id}/${String(offset + single)}`,
+          {method: "GET"}
+        )
+        const dataIds = await responseIds.json()
+        if (paperDataIncludeError(dataIds.data)) {
+          isEnd.current = true
+          setIsLoading(false)
+          return
+        }
+        const paperIds = dataIds.data.data.map((obj: any) => (obj.citedPaper.paperId))
+
         const response = await fetch(
           `/api/reference/${params.keyword_or_id}/${String(offset + single)}`,
+          {method: "POST", body: JSON.stringify({"ids": paperIds})}
         )
         const data = await response.json()
-        if (data.data.reference_papers.length == 0) {
+        if (paperDataIncludeError(data)) {
           isEnd.current = true
+          setIsLoading(false)
+          return
         }
+
         if (params.user) {
           getLike(params.user.uid)
         }
-        setPapers([...papers, ...data.data.reference_papers])
+
+        setPapers([...papers, ...data.data])
         setIsLoading(false)
         setOffset(offset + single)
+
       } else if (params.mode == 'favorites') {
         const docRef = doc(db, 'users', params.keyword_or_id)
         const docSnap = await getDoc(docRef)

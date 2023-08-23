@@ -67,7 +67,7 @@ export default function GridPapers(params: {
                         TLDR
                       </Heading>
                       <Text pt="2" fontSize="sm">
-                        {paper.tldr}
+                        {paper.tldr?.text}
                       </Text>
                     </Box>
                     <Stack direction={'row'} spacing="4">
