@@ -12,11 +12,14 @@ import {
   SimpleGrid,
   IconButton,
   Spacer,
+  Flex,
+  Container,
 } from '@chakra-ui/react'
 import { User } from 'firebase/auth'
 import Link from 'next/link'
 import React from 'react'
 import { FiStar } from 'react-icons/fi'
+import { SiSemanticscholar } from 'react-icons/si'
 import { paperData } from '@/app/utils/type'
 import styles from '@/styles/animation.module.css'
 
@@ -67,7 +70,7 @@ export default function GridPapers(params: {
                         TLDR
                       </Heading>
                       <Text pt="2" fontSize="sm">
-                        {paper.tldr}
+                        {paper.tldr?.text}
                       </Text>
                     </Box>
                     <Stack direction={'row'} spacing="4">
@@ -87,6 +90,16 @@ export default function GridPapers(params: {
                           {paper.year}
                         </Text>
                       </Box>
+                      <Box>
+                        <Heading size="xs" textTransform="uppercase">
+                          URL
+                        </Heading>
+                        <Box pt={"2"}>
+                          <Box as='a' href={paper.url as string} target='_blank' justifyItems={"center"}>
+                            <SiSemanticscholar/>
+                          </Box>
+                        </Box>
+                      </Box>
                       <Spacer />
                       {params.user && (
                         <Box>
@@ -103,7 +116,7 @@ export default function GridPapers(params: {
                   </Stack>
                 </CardBody>
               </Card>
-            </Box>,
+            </Box>
           )
         }
 

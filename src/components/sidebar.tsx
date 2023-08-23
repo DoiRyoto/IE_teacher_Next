@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import React, { ReactText } from 'react'
 import { IconType } from 'react-icons'
-import { FiStar, FiBarChart2 } from 'react-icons/fi'
+import { FiStar, FiBarChart2, FiHome } from 'react-icons/fi'
 import { LoginButton, LogoutButton } from './button/userAuthButton'
 import { useAuthContext } from '@/lib/provider/authContextProvider'
 
@@ -34,14 +34,19 @@ const SidebarContent = () => {
 
   const LinkItems: Array<LinkItemProps> = [
     {
-      name: 'Statistics',
-      icon: FiBarChart2,
-      linkFor: `/${user.user?.uid}/statistics`,
+      name: 'Home',
+      icon: FiHome,
+      linkFor: `/${user.user?.uid}/home`,
     },
     {
       name: 'Favourites',
       icon: FiStar,
       linkFor: `/${user.user?.uid}/favorites`,
+    },
+    {
+      name: 'Statistics [β]',
+      icon: FiBarChart2,
+      linkFor: `/${user.user?.uid}/statistics`,
     },
   ]
 

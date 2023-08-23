@@ -13,14 +13,17 @@ import HeaderIndex from '../components/header_index'
 import SearchBar from '../components/searchbar'
 import { useAuthContext } from '@/lib/provider/authContextProvider'
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react'
 
 export default function Home() {
   const user = useAuthContext()
-   const router = useRouter()
+  const router = useRouter()
 
-  if(user.user){
-    router.push("/home")
-  }
+  useEffect(() => {
+    if(user.user){
+      router.push(`/${user.user?.uid}/home`)
+    }
+  }, [user.user?.uid])
 
   return (
     <Stack direction={'column'} height="100%">
