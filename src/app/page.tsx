@@ -21,10 +21,10 @@ export default function Home() {
 
   useEffect(() => {
     if(user.user){
-      router.push("/home")
+      router.push(`/${user.user?.uid}/home`)
     }
   }, [user.user?.uid])
-  
+
   return (
     <Stack direction={'column'} height="100%">
       <HeaderIndex user={user.user} />

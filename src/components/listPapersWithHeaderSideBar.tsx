@@ -19,6 +19,7 @@ export default function ListPapersWithHeaderSideBar(params: {
   user: User | null
 }) {
   const [papers, setPapers] = useState<paperData[]>([])
+  const [likePapers, setLikePapers] = useState<paperData[]>([])
   const [offset, setOffset] = useState<number>(0)
   const firstRender = useRef(true)
   const isEnd = useRef(false)
@@ -68,7 +69,6 @@ export default function ListPapersWithHeaderSideBar(params: {
           {method: "POST", body: JSON.stringify({"ids": paperIds})}
         )
         const data = await response.json()
-        console.log(data.data)
         if (paperDataIncludeError(data)) {
           isEnd.current = true
           setIsLoading(false)
@@ -90,6 +90,48 @@ export default function ListPapersWithHeaderSideBar(params: {
         }
         isEnd.current = true
         setIsLoading(false)
+      } else if (params.mode == "home") {
+        isEnd.current = true
+        const docRef = doc(db, 'users', params.keyword_or_id)
+        const docSnap = await getDoc(docRef)
+
+        if (docSnap.exists()) {
+          const likesData = docSnap.data().likes as paperData[]
+          const likes = likesData.map((obj) => (obj.paperId))
+          const body = {
+            "positivePaperIds": likes,
+            "negativePaperIds": []}
+          const responseIds = await fetch(
+            `/api/recommend/${params.keyword_or_id}/${String(offset)}`,
+            {method: "POST", body: JSON.stringify(body)}
+          )
+          const dataIds = await responseIds.json()
+          if (paperDataIncludeError(dataIds)) {
+            isEnd.current = true
+            setIsLoading(false)
+            return
+          }
+
+          const paperIds = dataIds.data.recommendedPapers.map((obj: any) => (obj.paperId))
+
+          const response = await fetch(
+            `/api/reference/${params.keyword_or_id}/${String(offset)}`,
+            {method: "POST", body: JSON.stringify({"ids": paperIds})}
+          )
+          const data = await response.json()
+          if (paperDataIncludeError(data)) {
+            isEnd.current = true
+            setIsLoading(false)
+            return
+          }
+
+          if (params.user) {
+            getLike(params.user.uid)
+          }
+
+          setPapers(paperDataRemoveNull(data.data))
+          setIsLoading(false)
+        }
       }
     }
 
@@ -215,7 +257,7 @@ export default function ListPapersWithHeaderSideBar(params: {
   return (
     <Box>
       <Stack direction={'column'} height="100%">
-        <HeaderPapers />
+        <HeaderPapers/>
         <Stack direction={'row'} mt={'20'}>
           <Box>
             <SidebarWithHeader />

@@ -23,7 +23,7 @@ export default function Home({
 
       if (docSnap.exists()) {
         const likes = docSnap.data().likes as paperData[]
-        setWords(likes.map((obj) => obj.tldr).join(' '))
+        setWords(likes.map((obj) => obj.abstract).join(' '))
       }
     }
 
