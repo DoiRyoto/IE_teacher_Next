@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Stack } from '@chakra-ui/react'
+import { Box, Flex, Spinner, Stack, calc } from '@chakra-ui/react'
 import { User } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import React, { useState, useEffect, useRef } from 'react'
@@ -61,6 +61,7 @@ export default function ListPapersWithHeaderSideBar(params: {
         if (docSnap.exists()) {
           setPapers(docSnap.data().likes as paperData[])
         }
+        isEnd.current = true
         setIsLoading(false)
       }
     }
@@ -152,6 +153,7 @@ export default function ListPapersWithHeaderSideBar(params: {
         if (docSnap.exists()) {
           setPapers(docSnap.data().likes as paperData[])
         }
+        isEnd.current = true
         setIsLoading(false)
       }
     }
@@ -165,16 +167,27 @@ export default function ListPapersWithHeaderSideBar(params: {
           <Box>
             <SidebarWithHeader />
           </Box>
-          <Box p={4}>
-            <GridPapers
-              user={params.user}
-              papers={papers}
-              onClickLikeButton={pushLikeButton}
-            />
-            {!isEnd.current && !isLoading && (
-              <div ref={ref} aria-hidden={true} />
-            )}
-          </Box>
+            <Stack direction={'column'} p={4} justifyItems={"center"} width={"100%"}>
+              <GridPapers
+                user={params.user}
+                papers={papers}
+                onClickLikeButton={pushLikeButton}
+              />
+              {!isEnd.current && !isLoading && (
+                <div ref={ref} aria-hidden={true} />
+              )}
+              {!isEnd.current && isLoading && (
+                <Flex justify={"center"}>
+                  <Spinner
+                    thickness='4px'
+                    speed='0.65s'
+                    emptyColor='gray.200'
+                    color='blue.500'
+                    size='xl'
+                  />
+                </Flex>
+                )}
+            </Stack>
         </Stack>
       </Stack>
     </Box>

@@ -12,9 +12,15 @@ import HeaderIndex from '../components/header_index'
 
 import SearchBar from '../components/searchbar'
 import { useAuthContext } from '@/lib/provider/authContextProvider'
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const user = useAuthContext()
+   const router = useRouter()
+
+  if(user.user){
+    router.push("/home")
+  }
 
   return (
     <Stack direction={'column'} height="100%">

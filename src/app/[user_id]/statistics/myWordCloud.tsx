@@ -1,10 +1,11 @@
 'use client'
 
 import { Box } from '@chakra-ui/react'
-import { scaleLog } from '@visx/scale'
+import { scaleLinear } from '@visx/scale'
 import { Text } from '@visx/text'
 import Wordcloud from '@visx/wordcloud/lib/Wordcloud'
 import React from 'react'
+import { useRouter } from 'next/navigation';
 
 interface ExampleProps {
   width: number
@@ -44,12 +45,12 @@ export default function MyWordCloud({ width, height, text }: ExampleProps) {
 
   const words = wordFreq(text)
 
-  const fontScale = scaleLog({
+  const fontScale = scaleLinear({
     domain: [
       Math.min(...words.map((w) => w.value)),
       Math.max(...words.map((w) => w.value)),
     ],
-    range: [10, 100],
+    range: [0, width],
   })
   const fontSizeSetter = (datum: WordData) => fontScale(datum.value)
 
@@ -57,6 +58,12 @@ export default function MyWordCloud({ width, height, text }: ExampleProps) {
 
   const spiralType = 'rectangular'
   const withRotation = false
+
+  const router = useRouter();
+
+  function onClickWordElement (word: string) { 
+    router.push(`/search/${word}`)
+  }
 
   return (
     <Box>
@@ -74,12 +81,15 @@ export default function MyWordCloud({ width, height, text }: ExampleProps) {
         {(cloudWords) =>
           cloudWords.map((w, i) => (
             <Text
+              className='word_element'
               key={w.text}
               fill={colors[i % colors.length]}
               textAnchor={'middle'}
               transform={`translate(${w.x}, ${w.y}) rotate(${w.rotate})`}
               fontSize={w.size}
               fontFamily={w.font}
+              cursor="pointer"
+              onClick={() => onClickWordElement(w.text as string)}
             >
               {w.text}
             </Text>
