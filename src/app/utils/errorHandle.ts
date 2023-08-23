@@ -13,3 +13,7 @@ export function paperDataIncludeError(data: any){
 
     return false
 }
+
+export function paperDataRemoveNull(data: []){
+    return data.filter((item) => item != null)
+}

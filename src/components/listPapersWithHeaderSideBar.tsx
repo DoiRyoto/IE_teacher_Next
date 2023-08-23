@@ -11,7 +11,7 @@ import { paperData } from '@/app/utils/type'
 import HeaderPapers from '@/components/header_papers'
 import SidebarWithHeader from '@/components/sidebar'
 import { db } from '@/lib/firebase/store'
-import { paperDataIncludeError } from '@/app/utils/errorHandle'
+import { paperDataIncludeError, paperDataRemoveNull } from '@/app/utils/errorHandle'
 
 export default function ListPapersWithHeaderSideBar(params: {
   mode: string
@@ -48,7 +48,7 @@ export default function ListPapersWithHeaderSideBar(params: {
         if (params.user) {
           getLike(params.user.uid)
         }
-        setPapers(data.data.data)
+        setPapers(paperDataRemoveNull(data.data.data))
         setIsLoading(false)
       } else if (params.mode == 'reference') {
         const responseIds = await fetch(
@@ -79,7 +79,7 @@ export default function ListPapersWithHeaderSideBar(params: {
           getLike(params.user.uid)
         }
 
-        setPapers(data.data)
+        setPapers(paperDataRemoveNull(data.data))
         setIsLoading(false)
       } else if (params.mode == 'favorites') {
         const docRef = doc(db, 'users', params.keyword_or_id)
@@ -163,7 +163,7 @@ export default function ListPapersWithHeaderSideBar(params: {
           getLike(params.user.uid)
         }
 
-        setPapers([...papers, ...data.data.data])
+        setPapers([...papers, ...paperDataRemoveNull(data.data.data)])
         setIsLoading(false)
         setOffset(offset + single)
 
@@ -195,7 +195,7 @@ export default function ListPapersWithHeaderSideBar(params: {
           getLike(params.user.uid)
         }
 
-        setPapers([...papers, ...data.data])
+        setPapers([...papers, ...paperDataRemoveNull(data.data)])
         setIsLoading(false)
         setOffset(offset + single)
 
