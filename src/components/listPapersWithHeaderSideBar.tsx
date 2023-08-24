@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Flex, Spinner, Stack } from '@chakra-ui/react'
+import { Box, Flex, Heading, Spinner, Stack } from '@chakra-ui/react'
 import { User } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import React, { useState, useEffect, useRef } from 'react'
@@ -91,7 +91,6 @@ export default function ListPapersWithHeaderSideBar(params: {
         isEnd.current = true
         setIsLoading(false)
       } else if (params.mode == "home") {
-        isEnd.current = true
         const docRef = doc(db, 'users', params.keyword_or_id)
         const docSnap = await getDoc(docRef)
 
@@ -131,6 +130,7 @@ export default function ListPapersWithHeaderSideBar(params: {
 
           setPapers(paperDataRemoveNull(data.data))
           setIsLoading(false)
+          isEnd.current = true
         }
       }
     }
@@ -263,6 +263,11 @@ export default function ListPapersWithHeaderSideBar(params: {
             <SidebarWithHeader />
           </Box>
             <Stack direction={'column'} p={4} justifyItems={"center"} width={"100%"}>
+              {params.mode == "home" && (
+                <Heading>
+                  Recommend Papers
+                </Heading>
+              )}
               <GridPapers
                 user={params.user}
                 papers={papers}
