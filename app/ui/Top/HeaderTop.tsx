@@ -3,7 +3,7 @@ import React from 'react'
 
 const HeaderTop = () => {
   return (
-    <header className='flex justify-between p-4'>
+    <header className='flex justify-between p-4 border-b border-x-gray-100'>
       <Link href="/" className='font-bold text-2xl p-2'>
         IE:Teacher
       </Link>

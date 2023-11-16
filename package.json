@@ -13,9 +13,11 @@
   },
   "dependencies": {
     "@storybook/addon-styling": "^1.3.7",
+    "lucide-react": "^0.292.0",
     "next": "14.0.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@playwright/test": "^1.39.0",
