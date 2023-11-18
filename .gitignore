@@ -42,5 +42,6 @@ next-env.d.ts
 
 # storybook
 __screenshots__
-storybook-static.reg
-.reg
+storybook-static
+
+sample_unit_test
