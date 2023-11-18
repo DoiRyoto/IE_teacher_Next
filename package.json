@@ -14,8 +14,9 @@
     "format": "prettier --write \"./src/**/*.{ts,tsx}\"",
     "format:check": "prettier \"./src/**/*.ts\" \"./src/**/*.tsx\" --check",
     "test:storybook": "test-storybook",
-    "storycap": "storycap --serverCmd \"npx http-server storybook-static -p",
-    "vrt:snapshot": "storycap --serverCmd \"npx http-server storybook-static -p 6006\" http://localhost:6006",
+    "storycap": "npx storycap http://localhost:6006",
+    "vrt:snapshot": "storycap --serverCmd \"npx http-server storybook-static -a localhost -p 6006\" http://localhost:6006",
+    "vrt:expected": "rimraf .reg/expected && mv __screenshots__ .reg/expected",
     "vrt:run": "reg-suit run"
   },
   "dependencies": {
