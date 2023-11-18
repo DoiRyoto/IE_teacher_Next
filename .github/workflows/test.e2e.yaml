@@ -12,5 +12,7 @@ jobs:
           node-version: 18
       - name: Install dependencies
         run: npm ci
+      - name: npx playwright install
+        run: npx playwright install
       - name: Run E2E Test
         run: npx playwright test
