@@ -19,6 +19,7 @@ jobs:
         - name: Install dependencies
           if: steps.node_modules_cache.outputs.cache-hit != 'true'
           run: npm ci
+  
   e2e:
     needs: install
     runs-on: ubuntu-latest
@@ -33,5 +34,9 @@ jobs:
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+      - name: Build Next App
+        run: npm run build
+      - name: Start Next App
+        run: npm run start
       - name: Run E2E Test
         run: npx playwright test
