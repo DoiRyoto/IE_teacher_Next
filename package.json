@@ -8,6 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
+    "test:storybook": "test-storybook --url http://localhost:6006",
+    "test:e2e": "npx playwright test",
+    "test:e2e:report": "npx playwright show-report",
+    "test:e2e:codegen": "npx playwright codegen",
+    "typecheck": "tsc --noEmit",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
