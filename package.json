@@ -8,15 +8,15 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "storybook": "storybook dev -p 9001",
+    "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"./src/**/*.{ts,tsx}\"",
     "format:check": "prettier \"./src/**/*.ts\" \"./src/**/*.tsx\" --check",
     "test:storybook": "test-storybook",
     "storycap": "storycap --serverCmd \"npx http-server storybook-static -p",
-    "vrt: snapshot": "storycap --serverCmd \"npx http-server storybook-static -p 6006\" http:// localhost: 6006",
-    "vrt: run": "reg-suit run"
+    "vrt:snapshot": "storycap --serverCmd \"npx http-server storybook-static -p 6006\" http://localhost:6006",
+    "vrt:run": "reg-suit run"
   },
   "dependencies": {
     "i": "^0.3.7",
