@@ -42,8 +42,5 @@ next-env.d.ts
 
 # storybook
 __screenshots__
-actual
-expected
-diff
 storybook-static.reg
 .reg
