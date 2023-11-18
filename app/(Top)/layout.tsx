@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} flex flex-col justify-between min-h-screen`}>
         <HeaderTop />
-        <main className="container max-w-6xl">{children}</main>
+        <main className="container mx-auto max-w-6xl">{children}</main>
         <FooterTop />
       </body>
     </html>
