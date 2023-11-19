@@ -45,7 +45,7 @@ const SearchBarTop = () => {
           <Search className='h-full w-12 p-2 bg-slate-800 rounded'/>
         </button>
       </div>
-      {valid && <text className="text-red-600">Please enter at least one character.</text>}
+      {valid && <p className="text-red-600">Please enter at least one character.</p>}
     </div>
   )
 }
