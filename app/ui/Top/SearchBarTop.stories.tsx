@@ -4,6 +4,17 @@ import SearchBarTop from './SearchBarTop';
 const meta = {
   title: 'SearchBarTop',
   component: SearchBarTop,
+  parameters: {
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: '/search',
+        query: {
+          q: 'test',
+        },
+      },
+    },
+  }
 } satisfies Meta<typeof SearchBarTop>;
 
 export default meta;

@@ -45,3 +45,7 @@ __screenshots__
 storybook-static
 
 sample_unit_test
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
