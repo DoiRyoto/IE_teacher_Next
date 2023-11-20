@@ -9,21 +9,21 @@ test("ロゴをクリックすると、Topページに遷移する", async ({ pa
   await expect(page).toHaveURL(url("/"));
 });
 
-test("入力フォームに'test'と入力し、検索ボタンを押すと'/search?q=test'に遷移する'", async ({ page }) => {
+test("入力フォームに'test'と入力し、検索ボタンを押すと'/search?query=test'に遷移する'", async ({ page }) => {
   await page.goto(url('/'));
 
   await page.getByRole("textbox", { name: "検索バー" }).fill("test");
   await page.getByRole("button", {name: "検索ボタン"}).click();
   await page.waitForTimeout(2000);
-  await expect(page).toHaveURL(url("/search?q=test"));
+  await expect(page).toHaveURL(url("/search?query=test"));
 });
-test("入力フォームに'test'と入力し、'enterキー'を押すと'/search?q=test'に遷移する'", async ({ page }) => {
+test("入力フォームに'test'と入力し、'enterキー'を押すと'/search?query=test'に遷移する'", async ({ page }) => {
   await page.goto(url('/'));
 
   await page.getByRole("textbox", { name: "検索バー" }).fill("test");
   await page.getByRole("textbox", { name: "検索バー" }).press("Enter");
   await page.waitForTimeout(2000);
-  await expect(page).toHaveURL(url("/search?q=test"));
+  await expect(page).toHaveURL(url("/search?query=test"));
 });
 test("入力フォームに何も入力せず検索ボタンを押すと、ページ遷移しない", async ({ page }) => {
   await page.goto(url('/'));
