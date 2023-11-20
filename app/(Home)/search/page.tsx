@@ -1,8 +1,25 @@
-import React from 'react'
+import Papers from '@/app/ui/Search/Papers';
+import React, { Suspense } from 'react'
 
-const page = () => {
+const page = ({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+  }
+}) => {
+  const currentPage = Number(searchParams?.page) || 1;
+  const searchWord = searchParams?.query || ""
+ 
+  // const totalPages = await fetchInvoicesPages(query);
+  
   return (
-    <div>page</div>
+    <section className='w-full'>
+      <Suspense>
+        <Papers query={searchWord} page={currentPage} />
+      </Suspense>
+    </section>
   )
 }
 
