@@ -21,7 +21,7 @@ const SearchBarTop = () => {
       return
     }
 
-    router.push(`/search?q=${word}`)
+    router.push(`/search?query=${word}`)
   }
 
   const keyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
