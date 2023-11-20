@@ -14,13 +14,8 @@ import {
 const ITEMS_PER_PAGE = 20
 type authorType = {
   authorId?: String | null
-  externalIds?: {
-    DBLP?: Number | null
-    ORCID?: Number | null
-  } | null
   url?: String | null
   name?: String | null
-  aliases?: String[] | null
   affiliations?: String[] | null
   homepage?: String | null
   paperCount?: Number | null
@@ -30,13 +25,8 @@ type authorType = {
 
 const authorTypeDecoder: Decoder<authorType> = object({
   authorId: optional(oneOf(string(), constant(null))),
-  externalIds: optional(oneOf(object({
-    DBLP: optional(oneOf(number(), constant(null))),
-    ORCID: optional(oneOf(number(), constant(null))),
-  }), constant(null))),
   url: optional(oneOf(string(), constant(null))),
   name: optional(oneOf(string(), constant(null))),
-  aliases: optional(oneOf(array(string()), constant(null))),
   affiliations: optional(oneOf(array(string()), constant(null))),
   homepage: optional(oneOf(string(), constant(null))),
   paperCount: optional(oneOf(number(), constant(null))),
@@ -101,61 +91,49 @@ const paperDetailsTypeDecoder: Decoder<paperDetailsType[]> = array(object({
 }))
 
 type paperIdType = {
-  paperId: String
+  paperId?: String | null
   title?: String | null
 }
 
 const paperIdTypeDecoder: Decoder<paperIdType> = object({
-  paperId: string(),
+  paperId: optional(oneOf(string(), constant(null))),
   title: optional(oneOf(string(), constant(null)))
 })
 
 const paperIdsTypeDecoder: Decoder<paperIdType[]> = array(object({
-  paperId: string(),
+  paperId: optional(oneOf(string(), constant(null))),
   title: optional(oneOf(string(), constant(null)))
 }))
 
 type fetchPaperIdsType = {
   total: Number
-  offset: Number
-  next: Number
   data: paperIdType[]
 }
 
 const fetchPaperIdsTypeDecoder: Decoder<fetchPaperIdsType> = object({
   total: number(),
-  offset: number(),
-  next: number(),
   data: paperIdsTypeDecoder
 })
 
 type fetchCitationPaperIdsType = {
-  offset: Number
-  next: Number
   data: {
     citingPaper: paperIdType
   }[]
 }
 
 const fetchCitationPaperIdsTypeDecoder: Decoder<fetchCitationPaperIdsType> = object({
-  offset: number(),
-  next: number(),
   data: array(object({
     citingPaper: paperIdTypeDecoder
   }))
 })
 
 type fetchReferencePaperIdsType = {
-  offset: Number
-  next: Number
   data: {
     citedPaper: paperIdType
   }[]
 }
 
 const fetchReferencePaperIdsTypeDecoder: Decoder<fetchReferencePaperIdsType> = object({
-  offset: number(),
-  next: number(),
   data: array(object({
     citedPaper: paperIdTypeDecoder
   }))
@@ -248,13 +226,15 @@ export const fetchReferences = async (paperId: string, currentPage: number) => {
 
   try {
     const paperIds = await fetchReferencePaperIdsByPaperId(paperId, currentPage)
+
+    if (!paperIds.data.length) return []
     const res = await fetch(
       `https://api.semanticscholar.org/graph/v1/paper/batch?${urlSearchParams}`,
       {
         method: "POST",
         headers: {"x-api-key": process.env.NEXT_PUBLIC_S2_API_KEY || ''},
         body: JSON.stringify({
-          ids: paperIds.data.map((value) => value.citedPaper.paperId)
+          ids: paperIds.data.map((value) => {value.citedPaper.paperId} )
         })
       }
     )
@@ -300,6 +280,8 @@ export const fetchCitations = async (paperId: string, currentPage: number) => {
 
   try {
     const paperIds = await fetchCitationsPaperIdsByPaperId(paperId, currentPage)
+
+    if (!paperIds.data.length) return []
     const res = await fetch(
       `https://api.semanticscholar.org/graph/v1/paper/batch?${urlSearchParams}`,
       {
