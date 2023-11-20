@@ -19,7 +19,7 @@ HTML,CSS(TailwindCSS),Next.js,React
 
 テスト  
 Jest  
-Testing Library
+Testing Library  
 Storybook  
 Playwright  
 reg-suit
