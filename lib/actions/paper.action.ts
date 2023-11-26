@@ -12,16 +12,16 @@ import {
 } from '@mojotech/json-type-validation';
 
 const ITEMS_PER_PAGE = 20
-type authorType = {
-  authorId?: String | null
-  url?: String | null
-  name?: String | null
-  affiliations?: String[] | null
-  homepage?: String | null
-  paperCount?: Number | null
-  citationCount?: Number | null
-  hIndex?: Number | null
-}
+type authorType = Partial<{
+  authorId: String | null
+  url: String | null
+  name: String | null
+  affiliations: String[] | null
+  homepage: String | null
+  paperCount: Number | null
+  citationCount: Number | null
+  hIndex: Number | null
+}>
 
 const authorTypeDecoder: Decoder<authorType> = object({
   authorId: optional(oneOf(string(), constant(null))),
@@ -34,33 +34,33 @@ const authorTypeDecoder: Decoder<authorType> = object({
   hIndex: optional(oneOf(number(), constant(null)))
 })
 
-export type paperDetailsType = {
-  paperId?: string | null
-  url?: String | null
-  title?: String | null
-  abstract?: String | null
-  venue?: String | null
-  year?: Number | null
-  referenceCount?: Number | null
-  citationCount?: Number | null
-  influentialCitationCount?: Number | null
-  isOpenAccess?: boolean | null
-  openAccessPdf?: {
-    url?: String | null
-    status?: String | null
-  } | null
-  fieldsOfStudy?: String[] | null
-  journal?: {
-    name?: String | null
-    pages?: String | null
-    volume?: String | null
-  } | null
-  authors?: authorType[] | null
-  tldr?: {
-    model?: String | null
-    text?: String | null
-  } | null
-}
+export type paperDetailsType = Partial<{
+  paperId: string | null
+  url: String | null
+  title: String | null
+  abstract: String | null
+  venue: String | null
+  year: Number | null
+  referenceCount: Number | null
+  citationCount: Number | null
+  influentialCitationCount: Number | null
+  isOpenAccess: boolean | null
+  openAccessPdf: Partial<{
+    url: String | null
+    status: String | null
+  }> | null
+  fieldsOfStudy: String[] | null
+  journal: Partial<{
+    name: String | null
+    pages: String | null
+    volume: String | null
+  }> | null
+  authors: authorType[] | null
+  tldr: Partial<{
+    model: String | null
+    text: String | null
+  }> | null
+}>
 
 const paperDetailsTypeDecoder: Decoder<paperDetailsType[]> = array(object({
   paperId: optional(oneOf(string(), constant(null))),
@@ -90,10 +90,10 @@ const paperDetailsTypeDecoder: Decoder<paperDetailsType[]> = array(object({
   }), constant(null)))
 }))
 
-type paperIdType = {
-  paperId?: String | null
-  title?: String | null
-}
+type paperIdType = Partial<{
+  paperId: String | null
+  title: String | null
+}>
 
 const paperIdTypeDecoder: Decoder<paperIdType> = object({
   paperId: optional(oneOf(string(), constant(null))),
@@ -105,21 +105,21 @@ const paperIdsTypeDecoder: Decoder<paperIdType[]> = array(object({
   title: optional(oneOf(string(), constant(null)))
 }))
 
-type fetchPaperIdsType = {
+type fetchPaperIdsType = Partial<{
   total: Number
   data: paperIdType[]
-}
+}>
 
 const fetchPaperIdsTypeDecoder: Decoder<fetchPaperIdsType> = object({
   total: number(),
   data: paperIdsTypeDecoder
 })
 
-type fetchCitationPaperIdsType = {
-  data: {
+type fetchCitationPaperIdsType = Partial<{
+  data: Partial<{
     citingPaper: paperIdType
-  }[]
-}
+  }>[]
+}>
 
 const fetchCitationPaperIdsTypeDecoder: Decoder<fetchCitationPaperIdsType> = object({
   data: array(object({
@@ -127,11 +127,11 @@ const fetchCitationPaperIdsTypeDecoder: Decoder<fetchCitationPaperIdsType> = obj
   }))
 })
 
-type fetchReferencePaperIdsType = {
-  data: {
+type fetchReferencePaperIdsType = Partial<{
+  data: Partial<{
     citedPaper: paperIdType
-  }[]
-}
+  }>[]
+}>
 
 const fetchReferencePaperIdsTypeDecoder: Decoder<fetchReferencePaperIdsType> = object({
   data: array(object({
@@ -174,6 +174,8 @@ export const searchPapersBySearchWord = async (searchWord: string, currentPage: 
 
   try {
     const paperIds = await fetchPaperIdsBySearchWord(searchWord, currentPage)
+    if (!paperIds.data || paperIds.data.length == 0) return []
+
     const res = await fetch(
       `https://api.semanticscholar.org/graph/v1/paper/batch?${urlSearchParams}`,
       {
@@ -226,15 +228,19 @@ export const fetchReferences = async (paperId: string, currentPage: number) => {
 
   try {
     const paperIds = await fetchReferencePaperIdsByPaperId(paperId, currentPage)
+    if (!paperIds.data || paperIds.data.length == 0) return []
 
-    if (!paperIds.data.length) return []
     const res = await fetch(
       `https://api.semanticscholar.org/graph/v1/paper/batch?${urlSearchParams}`,
       {
         method: "POST",
         headers: {"x-api-key": process.env.NEXT_PUBLIC_S2_API_KEY || ''},
         body: JSON.stringify({
-          ids: paperIds.data.map((value) => {value.citedPaper.paperId} )
+          ids: paperIds.data.map((value) => {
+            if(value.citedPaper){
+              value.citedPaper.paperId
+            }}
+          )
         })
       }
     )
@@ -280,15 +286,19 @@ export const fetchCitations = async (paperId: string, currentPage: number) => {
 
   try {
     const paperIds = await fetchCitationsPaperIdsByPaperId(paperId, currentPage)
+    if (!paperIds.data || paperIds.data.length == 0) return []
 
-    if (!paperIds.data.length) return []
     const res = await fetch(
       `https://api.semanticscholar.org/graph/v1/paper/batch?${urlSearchParams}`,
       {
         method: "POST",
         headers: {"x-api-key": process.env.NEXT_PUBLIC_S2_API_KEY || ''},
         body: JSON.stringify({
-          ids: paperIds.data.map((value) => value.citingPaper.paperId)
+          ids: paperIds.data.map((value) => {
+            if(value.citingPaper){
+              value.citingPaper.paperId
+            }
+          })
         })
       }
     )

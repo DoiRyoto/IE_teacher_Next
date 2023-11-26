@@ -1,12 +1,10 @@
-import { searchPapersBySearchWord } from '@/lib/actions/paper.action'
+import { paperDetailsType } from '@/lib/actions/paper.action'
 import React from 'react'
 import Paper from './Paper'
 
-const Papers = async (
-  { query, page } : { query: string, page: number }
+const Papers = (
+  { papers } : { papers: paperDetailsType[] }
 ) => {
-  const papers = await searchPapersBySearchWord(query, page)
-
   return (
     <div className='w-full'>
       <div className='flex flex-col'>

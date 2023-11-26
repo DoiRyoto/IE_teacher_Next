@@ -1,4 +1,4 @@
-import Papers from '@/app/ui/Search/Papers';
+import PapersContainer from '@/app/ui/Search/Papers/PapersContainer';
 import React, { Suspense } from 'react'
 
 const page = ({
@@ -11,13 +11,11 @@ const page = ({
 }) => {
   const currentPage = Number(searchParams?.page) || 1;
   const searchWord = searchParams?.query || ""
- 
-  // const totalPages = await fetchInvoicesPages(query);
   
   return (
     <section className='w-full'>
       <Suspense>
-        <Papers query={searchWord} page={currentPage} />
+        <PapersContainer query={searchWord} page={currentPage} />
       </Suspense>
     </section>
   )
