@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import SearchBarTop from "./SearchBarTop";
-import { AppRouterContextProviderMock } from "@/tests/jest";
+import { AppRouterContextProviderMock } from "@/test/jest";
 
 const user = userEvent.setup();
 

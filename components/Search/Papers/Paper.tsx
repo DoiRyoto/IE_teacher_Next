@@ -1,4 +1,4 @@
-import { paperDetailsType } from '@/lib/actions/paper.action'
+import { paperDetailsType } from '@/action/paper.action'
 import React from 'react'
 import Link from 'next/link';
 import { MdPictureAsPdf } from 'react-icons/md'
@@ -7,6 +7,7 @@ import { SiSemanticscholar } from 'react-icons/si'
 const Paper = (
   { paper } : { paper: paperDetailsType }
 ) => {
+  if(!paper) return
   return (
     <article className='w-full relative flex flex-col gap-2 border-b p-5 hover:bg-slate-900'>
       <Link href={`/explore/${paper.paperId?.toString()}`} tabIndex={-1} className='absolute inset-0'/>
