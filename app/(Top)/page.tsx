@@ -1,5 +1,5 @@
 import React from 'react'
-import SearchBarTop from '../ui/Top/SearchBarTop'
+import SearchBarTop from '../../components/Top/SearchBarTop'
 
 const page = () => {
   return (

@@ -1,4 +1,4 @@
-import { searchPapersBySearchWord } from '@/lib/actions/paper.action'
+import { searchPapersBySearchWord } from '@/action/paper.action'
 import React from 'react'
 import Papers from './Papers'
 

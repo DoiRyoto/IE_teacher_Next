@@ -1,4 +1,4 @@
-import { fetchCitations, fetchReferences } from '@/lib/actions/paper.action'
+import { fetchCitations, fetchReferences } from '@/action/paper.action'
 import React from 'react'
 import Papers from './Papers'
 

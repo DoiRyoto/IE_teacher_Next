@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
-import ModeSwitchButton from '@/app/ui/Explore/ModeSwitchButton'
-import PapersContainer from '@/app/ui/Explore/Papers/PapersContainer'
+import ModeSwitchButton from '@/components/Explore/ModeSwitchButton'
+import PapersContainer from '@/components/Explore/Papers/PapersContainer'
 
 const page = ({
   params,
