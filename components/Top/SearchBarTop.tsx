@@ -40,9 +40,9 @@ const SearchBarTop = () => {
   return (
     <div className='w-[90%]'>
       <div className='flex flex-row gap-3 h-12'>
-        <input title="検索バー" placeholder='Input Paper title or Keyword' className="w-full px-4 py-2 text-black rounded" onChange={changeWord} value={word} onKeyDown={keyDownHandler}/>
+        <input title="検索バー" placeholder='Input Paper title or Keyword' className="w-full px-4 py-2 rounded" onChange={changeWord} value={word} onKeyDown={keyDownHandler}/>
         <button onClick={clickHandler} title='検索ボタン'>
-          <Search className='h-full w-12 p-2 bg-slate-800 rounded'/>
+          <Search className='h-full w-12 p-2 bg-[#1f242b] rounded'/>
         </button>
       </div>
       {valid && <p className="text-red-600">Please enter at least one character.</p>}

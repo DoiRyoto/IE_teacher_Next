@@ -1,4 +1,4 @@
-import { paperDetailsType } from '@/lib/actions/paper.action'
+import { paperDetailsType } from '@/action/paper.action'
 import React from 'react'
 import Paper from './Paper'
 
@@ -10,7 +10,7 @@ const Papers = (
       <div className='flex flex-col'>
         {
           papers.map((paper) => {
-            return (paper.paperId ? <Paper key={paper.paperId} paper={paper} /> : null)
+            if(paper) return (paper.paperId ? <Paper key={paper.paperId} paper={paper} /> : null)
           })
         }
       </div>

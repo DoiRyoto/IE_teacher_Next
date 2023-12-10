@@ -1,4 +1,4 @@
-import PapersContainer from '@/app/ui/Search/Papers/PapersContainer';
+import PapersContainer from '@/components/Search/Papers/PapersContainer';
 import React, { Suspense } from 'react'
 
 const page = ({

@@ -1,7 +1,9 @@
 import type { Preview } from "@storybook/react";
 import { withScreenshot } from "storycap";
+import { ThemeProvider } from "../components/theme-provider";
+import React from "react";
 
-import '../app/ui/globals.css';
+import '../app/globals.css';
 
 export const decorators = [withScreenshot];
 const preview: Preview = {
@@ -12,8 +14,18 @@ const preview: Preview = {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
+      
     },
   },
+  decorators: [
+    (Story) => {
+      return (
+        <ThemeProvider>
+          <Story />
+        </ThemeProvider>
+      );
+    },
+  ],
 };
 
 export default preview;
